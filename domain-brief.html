@@ -338,6 +338,75 @@
   .refs li { margin-bottom: 8px; }
   .refs h4 { margin-top: 18px; }
 
+  /* TOC */
+  .toc-section {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin: 24px 0 40px;
+  }
+  .toc-eyebrow {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .toc-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 22px;
+    color: var(--ink);
+  }
+  .toc-cluster { margin-bottom: 18px; }
+  .toc-cluster:last-child { margin-bottom: 0; }
+  .toc-cluster-head {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dotted var(--accent-line);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .toc-item {
+    display: flex;
+    gap: 14px;
+    padding: 7px 8px;
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.5;
+    border-radius: 4px;
+    transition: color 0.15s, background-color 0.15s, transform 0.1s;
+    margin: 0 -8px;
+  }
+  .toc-item:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+    transform: translateX(3px);
+  }
+  .toc-num {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--accent);
+    min-width: 22px;
+    letter-spacing: 0.04em;
+    padding-top: 3px;
+    font-weight: 600;
+  }
+  .toc-text { flex: 1; }
+
+  /* SCROLL ANCHOR */
+  .paper { scroll-margin-top: 24px; }
+  .cluster-head { scroll-margin-top: 24px; }
+
   /* RESPONSIVE */
   @media (max-width: 720px) {
     body { font-size: 16.5px; line-height: 1.8; }
@@ -363,6 +432,10 @@
     .data-list { padding: 16px 18px; }
     .data-list li { font-size: 15px; }
     .verify-note { padding: 14px 18px; font-size: 13px; }
+    .toc-section { padding: 20px 22px; margin: 18px 0 28px; }
+    .toc-title { font-size: 17.5px; margin-bottom: 18px; }
+    .toc-item { font-size: 14.5px; padding: 6px 6px; }
+    .toc-num { font-size: 11.5px; min-width: 20px; }
   }
   @media (max-width: 420px) {
     body { font-size: 16px; }
@@ -449,6 +522,41 @@
 <section>
   <h2>열세 가지 논문 주제</h2>
 
+  <!-- TOC -->
+  <div class="toc-section">
+    <div class="toc-eyebrow">한눈에</div>
+    <h3 class="toc-title">열세 가지 주제 목차</h3>
+
+    <div class="toc-cluster">
+      <div class="toc-cluster-head">묶음 I · 복지 신청과 비수급</div>
+      <a href="#p1" class="toc-item"><span class="toc-num">01</span><span class="toc-text">한국 복지 신청에서의 행정부담</span></a>
+      <a href="#p2" class="toc-item"><span class="toc-num">02</span><span class="toc-text">한국 시민의 "받을 자격" 판단</span></a>
+      <a href="#p3" class="toc-item"><span class="toc-num">03</span><span class="toc-text">한국 비수급의 단계별 진단</span></a>
+    </div>
+
+    <div class="toc-cluster">
+      <div class="toc-cluster-head">묶음 II · 정책 커뮤니케이션과 시민 인식</div>
+      <a href="#p4" class="toc-item"><span class="toc-num">04</span><span class="toc-text">정책 안내문이 만드는 자기효능감과 제도 신뢰</span></a>
+      <a href="#p5" class="toc-item"><span class="toc-num">05</span><span class="toc-text">복지 경험이 만드는 시민 — 정책 피드백 longitudinal</span></a>
+      <a href="#p6" class="toc-item"><span class="toc-num">06</span><span class="toc-text">복지 메시지의 SNS 확산과 낙인 형성</span></a>
+    </div>
+
+    <div class="toc-cluster">
+      <div class="toc-cluster-head">묶음 III · 사회복지 실무 접점</div>
+      <a href="#p7" class="toc-item"><span class="toc-num">07</span><span class="toc-text">4자 상담의 의사소통 단절 유형</span></a>
+      <a href="#p8" class="toc-item"><span class="toc-num">08</span><span class="toc-text">위기가구 발굴-연결의 단계별 단절</span></a>
+      <a href="#p9" class="toc-item"><span class="toc-num">09</span><span class="toc-text">가족돌봄청년 조기 발견과 지원 경로</span></a>
+      <a href="#p10" class="toc-item"><span class="toc-num">10</span><span class="toc-text">고독사 안부망 접점 시퀀스</span></a>
+    </div>
+
+    <div class="toc-cluster">
+      <div class="toc-cluster-head">묶음 IV · 시스템·지역사회·알고리즘</div>
+      <a href="#p11" class="toc-item"><span class="toc-num">11</span><span class="toc-text">지역사회 집합적 효능감과 위기가구 발견</span></a>
+      <a href="#p12" class="toc-item"><span class="toc-num">12</span><span class="toc-text">사회복지사 의사결정 시뮬레이션</span></a>
+      <a href="#p13" class="toc-item"><span class="toc-num">13</span><span class="toc-text">복지정보 디지털 접근의 알고리즘 격차</span></a>
+    </div>
+  </div>
+
   <!-- ============== CLUSTER I ============== -->
   <div class="cluster-head">
     <div class="cluster-roman">묶음 I · 세 편</div>
@@ -457,7 +565,7 @@
   </div>
 
   <!-- PAPER 1 -->
-  <div class="paper">
+  <div class="paper" id="p1">
     <div class="paper-num">논문 1</div>
     <h3 class="paper-title">한국 복지 신청에서의 행정부담 — 학습비용·서류비용·낙인비용 중 어디서 떨어져나가는가</h3>
     <div class="paper-anchor">↳ 기반 이론 · <strong>Herd &amp; Moynihan (2018) Administrative Burden</strong> · 한국 실증 · Campbell &amp; Ahn (2023), Baekgaard et al. (2025)</div>
@@ -486,7 +594,7 @@
   </div>
 
   <!-- PAPER 2 -->
-  <div class="paper">
+  <div class="paper" id="p2">
     <div class="paper-num">논문 2</div>
     <h3 class="paper-title">한국 시민의 "받을 자격" 판단 — 자신과 타인 사이에서 어떤 기준이 가장 다르게 작동하는가</h3>
     <div class="paper-anchor">↳ 기반 이론 · <strong>van Oorschot (2000) CARIN deservingness</strong></div>
@@ -514,7 +622,7 @@
   </div>
 
   <!-- PAPER 3 -->
-  <div class="paper">
+  <div class="paper" id="p3">
     <div class="paper-num">논문 3</div>
     <h3 class="paper-title">한국 비수급의 단계별 진단 — 정책 유형별로 어느 단계에서 끊기는가</h3>
     <div class="paper-anchor">↳ 기반 이론 · <strong>van Oorschot (1991), Currie (2006) Non-Take-Up</strong> · 한국 ground-truth · 허용창 외 (2020)</div>
@@ -549,7 +657,7 @@
   </div>
 
   <!-- PAPER 4 -->
-  <div class="paper">
+  <div class="paper" id="p4">
     <div class="paper-num">논문 4</div>
     <h3 class="paper-title">정책 안내문이 만드는 자기효능감과 제도 신뢰 — 권리·시혜·행정·공동체 네 표현의 효과 비교</h3>
     <div class="paper-anchor">↳ 기반 이론 · <strong>Bandura (1977) self-efficacy · Easton political efficacy</strong></div>
@@ -577,7 +685,7 @@
   </div>
 
   <!-- PAPER 5 -->
-  <div class="paper">
+  <div class="paper" id="p5">
     <div class="paper-num">논문 5</div>
     <h3 class="paper-title">복지 경험이 만드는 시민 — 신청·수급·거절 경험이 정치 신뢰를 시간에 따라 어떻게 바꾸는가</h3>
     <div class="paper-anchor">↳ 기반 이론 · <strong>Mettler (2011) Policy Feedback · Submerged State</strong> · <strong>Pierson (1993)</strong></div>
@@ -605,7 +713,7 @@
   </div>
 
   <!-- PAPER 6 -->
-  <div class="paper">
+  <div class="paper" id="p6">
     <div class="paper-num">논문 6</div>
     <h3 class="paper-title">복지 메시지의 SNS 확산과 낙인 프레임 형성 — 어떤 표현이 어디서 낙인을 키우는가</h3>
     <div class="paper-anchor">↳ 기반 이론 · <strong>Goffman (1963), Spicker (1984)</strong> 낙인 · 시뮬레이션 인프라 OASIS (Yang et al. 2024)</div>
@@ -640,7 +748,7 @@
   </div>
 
   <!-- PAPER 7 -->
-  <div class="paper">
+  <div class="paper" id="p7">
     <div class="paper-num">논문 7</div>
     <h3 class="paper-title">사회복지사·잠재 수혜자·가족·행정담당자 4자 상담의 의사소통 단절 유형</h3>
     <div class="paper-anchor">↳ 시뮬레이션 인프라 · CAMEL multi-agent dialogue (Li et al. 2023) · 사회복지 자문 결합</div>
@@ -668,7 +776,7 @@
   </div>
 
   <!-- PAPER 8 -->
-  <div class="paper">
+  <div class="paper" id="p8">
     <div class="paper-num">논문 8</div>
     <h3 class="paper-title">위기가구 발굴-연결의 단계별 단절 — 발굴되어도 왜 연결되지 않는가</h3>
     <div class="paper-anchor">↳ 한국 정책 의제 · 보건복지부 위기가구 발굴 정책 · KIHASA 사각지대 연구</div>
@@ -696,7 +804,7 @@
   </div>
 
   <!-- PAPER 9 -->
-  <div class="paper">
+  <div class="paper" id="p9">
     <div class="paper-num">논문 9</div>
     <h3 class="paper-title">가족돌봄청년 조기 발견과 지원 경로 — 어디서 누가 어떻게 다가가야 하는가</h3>
     <div class="paper-anchor">↳ 한국 정책 의제 · 보건복지부 가족돌봄·고립은둔청년 시범사업</div>
@@ -724,7 +832,7 @@
   </div>
 
   <!-- PAPER 10 -->
-  <div class="paper">
+  <div class="paper" id="p10">
     <div class="paper-num">논문 10</div>
     <h3 class="paper-title">고독사·고립 안부망 접점 시퀀스 — 어떤 순서로 다가가야 가장 덜 부담스러운가</h3>
     <div class="paper-anchor">↳ 기반 이론 · <strong>Goffman (1963), Spicker (1984)</strong> 낙인 관리</div>
@@ -759,7 +867,7 @@
   </div>
 
   <!-- PAPER 11 -->
-  <div class="paper">
+  <div class="paper" id="p11">
     <div class="paper-num">논문 11</div>
     <h3 class="paper-title">지역사회 집합적 효능감과 위기가구 발견 — 어떤 동네에서 위기가구가 더 빨리 발견되는가</h3>
     <div class="paper-anchor">↳ 기반 이론 · <strong>Sampson, Raudenbush, &amp; Earls (1997) Science</strong> · 집합적 효능감</div>
@@ -787,7 +895,7 @@
   </div>
 
   <!-- PAPER 12 -->
-  <div class="paper">
+  <div class="paper" id="p12">
     <div class="paper-num">논문 12</div>
     <h3 class="paper-title">사회복지사 의사결정의 시뮬레이션 — 사례관리 노트로 grounding한 결정이 실제와 얼마나 일치하는가</h3>
     <div class="paper-anchor">↳ 기반 방법 · <strong>Park et al. (2024)</strong> Self-Reports Grounding · 한국 자동화 복지행정 비판 · 홍승헌·황하 (2024)</div>
@@ -815,7 +923,7 @@
   </div>
 
   <!-- PAPER 13 -->
-  <div class="paper">
+  <div class="paper" id="p13">
     <div class="paper-num">논문 13</div>
     <h3 class="paper-title">복지정보 디지털 접근의 알고리즘 격차 — 추천·검색 시스템은 어떤 집단을 자동으로 배제하는가</h3>
     <div class="paper-anchor">↳ 기반 이론 · 디지털 격차 · 강신원 (2023) · 시뮬레이션 인프라 OASIS recommendation</div>
@@ -900,7 +1008,7 @@
 
   <div class="verify-note">
     <div class="verify-note-head">참고문헌 검증 메모</div>
-    아래 모든 인용은 2026년 5월 20일 자동 검증 프로세스를 거쳤습니다. 사회복지·사회학 이론 11편은 저자·연도·학술지·페이지·DOI 모두 정확. AI/시뮬레이션 11편은 arxiv ID 실재 접근 가능, 일부 저자·연도·제목 정정 반영(예: OASIS 1저자 Ziyi Yang, Park et al. 2024 정확한 제목, Anthis et al. 2025 등). 한국 학술 자료 4편은 KCI·DOI 확인됨.
+    아래 모든 인용은 2026년 5월 20일 <strong>두 차례에 걸친 자동 검증 프로세스</strong>를 거쳤습니다. (1) 사회복지·사회학 이론 11편 — 저자·연도·학술지·페이지·DOI 모두 정확. (2) AI/시뮬레이션 19편 — arxiv ID 실재 접근 가능, 일부 정정 반영 (OASIS 1저자 Ziyi Yang, Park et al. 2024 정식 arxiv 제목 "LLM Agents Grounded in Self-Reports…", Anthis et al. 2025 등). (3) 한국 KCI 학술 자료 4편 — 허용창 외(2020) ART002574813, 이병규(2024) ART003146173, 홍승헌·황하(2024) ART003116433, 강신원(2023) ART003033963 모두 KCI ID 확인. (4) 행정부담 최신 실증 5편 — PAR DOI 확인, Yang 2025 공동저자 Ying Wang 추가, Baekgaard 2025 권/호/페이지(85(2), 519–546) 보강, Vogel 2025 부제·페이지(85(4), 1098–1114) 보강.
   </div>
 
   <h4>사회복지·사회학 이론 anchor</h4>
@@ -920,11 +1028,11 @@
 
   <h4>행정부담 최신 실증 (검증 자료)</h4>
   <ol start="12">
-    <li>Baekgaard, M., Halling, A., &amp; Moynihan, D. P. (2025). Burden Tolerance: Developing a Validated Measurement Instrument Across Seven Countries. <em>Public Administration Review</em>. (한국 포함 7개국 4문항 척도 타당화)</li>
+    <li>Baekgaard, M., Halling, A., &amp; Moynihan, D. P. (2025). Burden Tolerance: Developing a Validated Measurement Instrument Across Seven Countries. <em>Public Administration Review</em>, 85(2), 519–546. (한국 포함 7개국 4문항 척도 타당화)</li>
     <li>Campbell, J. W., &amp; Ahn, Y. (2023). What Factors Underlie Burden Tolerance in South Korea? Policy Implementation Domain, Administrative Efficiency, and Bureaucratic Personality. <em>Asia Pacific Journal of Public Administration</em>, 45(4), 362–384.</li>
     <li>Martin, L., Delaney, L., &amp; Doyle, O. (2024). Everyday Administrative Burdens and Inequality. <em>Public Administration Review</em>, 84(4), 660–673.</li>
-    <li>Vogel, R., Dahlweg, A., &amp; Hattke, F. (2025). Do Vulnerable Citizens (Really) Perceive Higher Bureaucracy Costs? <em>Public Administration Review</em>.</li>
-    <li>Yang, Y. (2025). Capital, Administrative Burden, and Welfare Participation: Evidence from the Minimum Living Standard Scheme in China. <em>Public Administration Review</em>.</li>
+    <li>Vogel, R., Dahlweg, A., &amp; Hattke, F. (2025). Do Vulnerable Citizens (Really) Perceive Higher Bureaucracy Costs? Testing a Key Claim of the Administrative Burden Framework. <em>Public Administration Review</em>, 85(4), 1098–1114.</li>
+    <li>Yang, Y., &amp; Wang, Y. (2025). Capital, Administrative Burden, and Welfare Participation: Evidence from the Minimum Living Standard Scheme in China. <em>Public Administration Review</em>.</li>
   </ol>
 
   <h4>한국 사회복지 인접 연구</h4>
@@ -941,7 +1049,7 @@
     <li>Li, G., Hammoud, H. A. A. K., Itani, H., Khizbullin, D., &amp; Ghanem, B. (2023). CAMEL: Communicative Agents for "Mind" Exploration of Large Language Model Society. NeurIPS 2023. <em>arXiv:2303.17760</em>.</li>
     <li>Gao, C., Lan, X., Lu, Z., Mao, J., Piao, J., Wang, H., Jin, D., &amp; Li, Y. (2023). S³: Social-network Simulation System with LLM-Empowered Agents. <em>arXiv:2307.14984</em>.</li>
     <li>Yang, Z., et al. (2024). OASIS: Open Agent Social Interaction Simulations with One Million Agents. <em>arXiv:2411.11581</em>.</li>
-    <li>Park, J. S., et al. (2024). Generative Agent Simulations of 1,000 People [LLM Agents Grounded in Self-Reports Enable General-Purpose Simulation of Individuals]. <em>arXiv:2411.10109</em>.</li>
+    <li>Park, J. S., Zou, C. Q., Kamphorst, R., Egan, M., Shaw, A., Hill, B. M., Cai, C. J., Morris, M. R., Liang, P., Willer, R., &amp; Bernstein, M. S. (2024). LLM Agents Grounded in Self-Reports Enable General-Purpose Simulation of Individuals. <em>arXiv:2411.10109</em>. (1,052명 미국인 자기보고로 grounding한 가상 에이전트가 GSS 응답을 ~85% 정확도로 복제)</li>
     <li>Piao, J., et al. (2025). AgentSociety: Large-Scale Simulation of LLM-Driven Generative Agents. <em>arXiv:2502.08691</em>.</li>
     <li>Zhang, X., et al. (2025). SocioVerse: A World Model for Social Simulation Powered by LLM Agents and 10 Million Real-World Users. <em>arXiv:2504.10157</em>.</li>
     <li>Hou, A. B., et al. (2025). Can A Society of Generative Agents Simulate Human Behavior and Inform Public Health Policy? VacSim. COLM 2025. <em>arXiv:2503.09639</em>.</li>
