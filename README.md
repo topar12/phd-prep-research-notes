@@ -12,16 +12,16 @@ Personal research-strategy briefs written while preparing for U.S. PhD applicati
 ### `index.html` — Hub (랜딩 페이지)
 세 보고서로 연결되는 간단한 허브.
 
-### `community-brief.html` — Community Brief (v2.0 · 최신)
+### `community-brief.html` — Community Brief (v2.1 · 최신, 중복 제거판)
 
-**지역사회복지로 본 열세 가지 후보**
+**지역사회복지로 본 여덟 가지 후보**
 
-한국 지역사회복지(community-based social welfare)에 한정한 13개 논문 주제를 4 클러스터로 정리. 통합돌봄(커뮤니티 케어)·통합사례관리·지역사회보장협의체·사회복지관 3대 기능·읍면동 찾아가는 보건복지서비스에 한국형 가상 시민 시뮬레이션을 접합.
+Domain Brief와 중복되지 않는 community-unique 주제만 추린 버전. 한국 지역 institution(통장·이장·읍면동 공무원·시군구·협의체·사회복지관·마을공동체)에 묶인 8개 논문 주제를 4 클러스터로 정리.
 
-- **4 클러스터**: 사례관리·발굴·연계(3) · 지역사회 통합돌봄(3) · 거버넌스·실천 모델(3) · 안전망과 사회적 자본(4)
-- **이론 anchor**: Rothman 세 모델 · Sampson 집합적 효능감 · Putnam/Coleman 사회적 자본 · Chaskin community capacity · ABCD (Kretzmann&McKnight) · Herd&Moynihan 행정부담 · Goffman 낙인 · van Oorschot CARIN
+- **4 클러스터 × 2개**: 사례관리·발굴·연계(통장·이장 매개 / 4자 상담 with 읍면동) · 지역사회 통합돌봄(4영역 dropout / 시군구별 행정부담 격차) · 거버넌스·실천 모델(협의체 / 사회복지관 3대 기능) · 안전망과 사회적 자본(안부망 통장 매개 / 마을공동체 ABCD)
+- **이론 anchor**: Rothman 세 모델 · Putnam/Coleman 사회적 자본 · Chaskin community capacity · ABCD (Kretzmann&McKnight) · Herd&Moynihan 행정부담 (시군구 격차로 한정)
 - **한국 정책 anchor**: 돌봄통합지원법(2026 시행) · 희망복지지원단 · 지역사회보장협의체 · 읍면동 찾아가는 보건복지서비스 · 사회복지관 3대 기능
-- **참고문헌 55편**: 세 차례 자동 검증 거침
+- **참고문헌**: 32편, 자동 검증 거침. v2.0(13개)에서 broader 버전과 중복되던 5개 주제(비수급·사회복지사 grounding·가족돌봄청년·CARIN·Sampson 집합효능감)를 제거
 
 ### `domain-brief.html` — Domain Brief (v1.2)
 
