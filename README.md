@@ -7,38 +7,41 @@ Personal research-strategy briefs written while preparing for U.S. PhD applicati
 
 ## 📄 Contents
 
+세 개의 보고서로 같은 연구 방향을 세 가지 영역 범위에서 정리.
+
 ### `index.html` — Hub (랜딩 페이지)
+세 보고서로 연결되는 간단한 허브.
 
-두 보고서로 연결되는 간단한 허브.
+### `community-brief.html` — Community Brief (v2.0 · 최신)
 
-### `tech-brief.html` — Technical Brief (v0.2)
+**지역사회복지로 본 열세 가지 후보**
 
-**MiroFish 기반 LLM-에이전트 사회 시뮬레이션 × 사회복지 이론 — 박사 진학용 연구 주제 탐색 보고서**
+한국 지역사회복지(community-based social welfare)에 한정한 13개 논문 주제를 4 클러스터로 정리. 통합돌봄(커뮤니티 케어)·통합사례관리·지역사회보장협의체·사회복지관 3대 기능·읍면동 찾아가는 보건복지서비스에 한국형 가상 시민 시뮬레이션을 접합.
 
-CS·HCI·CSS 시각으로 정리. 방법론(LLM-agent simulation, synthetic persona, boundary conditions)과 사회복지 이론을 결합해 **19개 연구 주제**를 5 클러스터로 탐색.
-
-- 방법론 backbone: Generative Agents · CAMEL · S3 · OASIS · Out of One Many · Self-Reports Grounding · Cross-Cultural Calibration · Boundary papers
-- 사회복지 이론 backbone: Bandura · Herd&Moynihan · van Oorschot · Mettler · Goffman/Spicker · Sampson
-- 평가축: 박사 어드미션 fit · 사회복지 가치 · 신선함 · 1년 PoC · 데이터 리스크 · 이론 anchor
+- **4 클러스터**: 사례관리·발굴·연계(3) · 지역사회 통합돌봄(3) · 거버넌스·실천 모델(3) · 안전망과 사회적 자본(4)
+- **이론 anchor**: Rothman 세 모델 · Sampson 집합적 효능감 · Putnam/Coleman 사회적 자본 · Chaskin community capacity · ABCD (Kretzmann&McKnight) · Herd&Moynihan 행정부담 · Goffman 낙인 · van Oorschot CARIN
+- **한국 정책 anchor**: 돌봄통합지원법(2026 시행) · 희망복지지원단 · 지역사회보장협의체 · 읍면동 찾아가는 보건복지서비스 · 사회복지관 3대 기능
+- **참고문헌 55편**: 세 차례 자동 검증 거침
 
 ### `domain-brief.html` — Domain Brief (v1.2)
 
 **사회복지 이론과 한국 데이터로 본 열세 가지 후보**
 
-사회복지학자/도메인 전문가용으로 다시 쓴 버전. 기술 용어·시뮬레이션 내부 메커니즘은 빼고, **"어떤 사회복지 질문을 다룰 수 있고 어떤 한국 데이터로 검증할 수 있는가"**의 관점으로만. 한국어 중심, 더 큰 글꼴, serif 타이포.
+사회복지 전반(지역사회복지 + 정책 커뮤니케이션 + 비수급 일반)을 다룬 broader 버전. 13개 논문 주제를 4 클러스터로 정리.
 
-- **13개 논문 주제**를 4 클러스터로 정리: 복지 신청·비수급(3) · 정책 커뮤니케이션과 시민 인식(3) · 사회복지 실무 접점(4) · 사회복지 시스템·지역사회·알고리즘(3)
-- 각 주제별로 무엇을 보는지, 어떻게 적용되는지(가상 시나리오 예시 포함), 한국 데이터로 어떻게 검증하는지, 왜 publishable한지
-- 한국 학술 자료 anchor: 허용창 외(2020) 비수급 동태적 모델 · Campbell&Ahn(2023) 한국 burden tolerance · Baekgaard et al.(2025) 한국 포함 7개국 척도 · 이병규(2024) · 홍승헌·황하(2024) · 강신원(2023)
-- 참고문헌 35편, 모두 자동 검증 프로세스 거침 (저자·연도·DOI 확인)
+### `tech-brief.html` — Technical Brief (v0.2)
+
+**MiroFish 기반 LLM-에이전트 사회 시뮬레이션 × 사회복지 이론 — 박사 진학용 연구 주제 탐색 보고서**
+
+CS·HCI·CSS 시각으로 정리. 방법론 backbone(Generative Agents · CAMEL · OASIS · 합성 페르소나 · boundary 논문)과 사회복지 이론을 결합해 19개 연구 주제를 5 클러스터로 탐색. 박사 어드미션 fit·신선함·검증 가능성 매트릭스 포함.
 
 ---
 
 ## 🔗 어떤 걸 먼저 보면 좋은가
 
-- **빠르게 둘러볼 때**: `index.html` (허브) → 두 보고서 카드 비교 후 선택.
-- **사회복지·정책 시각**: `domain-brief.html` → 13개 논문 후보를 빠르게 훑고 흥미 있는 것부터.
-- **방법론·CS·HCI 시각**: `tech-brief.html` → MiroFish 계보의 위치, 합성 페르소나의 algorithmic fidelity, boundary condition.
+- **사회복지·정책 전문가**: `community-brief.html` (지역사회복지 한정, 최신) → 13개 주제를 빠르게 훑고 흥미 있는 것부터.
+- **사회복지 도메인 전반**: `domain-brief.html` (broader scope) → 정책 피드백 같은 정치사회학적 주제까지 포함.
+- **CS·HCI 전문가**: `tech-brief.html` → MiroFish 계보의 위치, 합성 페르소나의 algorithmic fidelity, boundary condition.
 
 GitHub Pages를 켜면 `https://topar12.github.io/phd-prep-research-notes/` 가 허브로 떠서 바로 열립니다.
 
@@ -46,16 +49,16 @@ GitHub Pages를 켜면 `https://topar12.github.io/phd-prep-research-notes/` 가 
 
 ## 🛠 Tech notes
 
-- 단일 파일 정적 HTML. JS는 TOC active highlight 한 줄(tech-brief만)뿐.
+- 단일 파일 정적 HTML, 외부 의존성 없음.
 - 모바일 반응형 — breakpoints: 960px / 720px / 640px / 420px.
 - 인쇄용 CSS 포함.
-- 외부 의존성 없음.
+- 모든 참고문헌은 서브에이전트 자동 검증 프로세스를 거침 (KCI ID, DOI, arxiv 접근 직접 확인).
 
 ---
 
 ## 📌 사용 안내
 
 본 자료는 **개인 연구 탐색 노트**이며 외부 학술 인용을 의도하지 않습니다.
-보고서 안에서 정리한 framing(예: *population-calibrated synthetic personas*, *validity boundary*, *administrative burden in simulated welfare journeys*, *collective qualitative patterns*)만 차용해 주세요.
+보고서 안에서 정리한 framing(예: *population-calibrated synthetic personas*, *administrative burden in simulated welfare journeys*, *Rothman three-model community decision simulation*, *ABCD-Chaskin community capacity simulation*)만 차용해 주세요.
 
-— Lee Ju-ho · 2026-05-20
+— Lee Ju-ho · 2026-05

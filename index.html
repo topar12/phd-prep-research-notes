@@ -16,6 +16,9 @@
     --accent: #5d3a4a;
     --accent-soft: #f1e6ea;
     --accent-line: #b58399;
+    --green: #3d5a4a;
+    --green-soft: #e8efe9;
+    --green-line: #8aaa97;
     --serif: "Iowan Old Style", "Apple SD Gothic Neo", "Nanum Myeongjo", "Charter", "Georgia", serif;
     --sans: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
   }
@@ -83,12 +86,31 @@
     color: var(--ink);
     transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
     display: block;
+    position: relative;
   }
   .card:hover {
     border-color: var(--rule-strong);
-    border-left-color: var(--accent);
     box-shadow: 0 6px 20px rgba(50, 30, 20, 0.06);
     transform: translateY(-1px);
+  }
+  .card.featured {
+    border-left-color: var(--green);
+    background: linear-gradient(180deg, var(--green-soft) 0%, var(--paper) 80%);
+  }
+  .card.featured:hover { border-left-color: var(--green); }
+  .badge {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    background: var(--green);
+    color: white;
+    font-family: var(--sans);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
   }
   .card-eyebrow {
     font-family: var(--sans);
@@ -98,6 +120,7 @@
     margin-bottom: 8px;
     text-transform: uppercase;
   }
+  .card.featured .card-eyebrow { color: var(--green); }
   .card-title {
     font-family: var(--serif);
     font-weight: 600;
@@ -135,6 +158,10 @@
     padding: 4px 10px;
     border-radius: 3px;
   }
+  .card.featured .card-meta span {
+    background: var(--green-soft);
+    color: var(--green);
+  }
   .card-arrow {
     display: block;
     margin-top: 14px;
@@ -143,6 +170,7 @@
     color: var(--accent);
     letter-spacing: 0.02em;
   }
+  .card.featured .card-arrow { color: var(--green); }
 
   .note {
     background: var(--accent-soft);
@@ -186,15 +214,16 @@
     h1 { font-size: 27px; line-height: 1.28; }
     .lede { font-size: 16.5px; margin-bottom: 36px; }
     .card { padding: 22px 22px; }
-    .card-title { font-size: 19px; }
+    .card-title { font-size: 19px; padding-right: 70px; }
     .card-desc { font-size: 14.5px; }
+    .badge { top: 14px; right: 14px; font-size: 9.5px; padding: 2px 6px; }
     .note { padding: 16px 18px; font-size: 13.5px; }
   }
   @media (max-width: 420px) {
     .hub { padding: 40px 16px 50px; }
     h1 { font-size: 24px; }
     .lede { font-size: 16px; }
-    .card-title { font-size: 18px; }
+    .card-title { font-size: 18px; padding-right: 60px; }
   }
 </style>
 </head>
@@ -203,10 +232,37 @@
 <div class="hub">
 
   <div class="eyebrow">박사 진학 준비 · 사회복지 AI</div>
-  <h1>같은 연구 방향, 두 가지 시각으로 정리한 보고서</h1>
-  <p class="lede">한국형 가상 시민 시뮬레이션과 사회복지 이론을 결합한 박사 진학용 연구 주제 탐색. 같은 연구를 기술 시각과 사회복지 도메인 시각으로 각각 정리.</p>
+  <h1>같은 연구 방향, 세 가지 시각으로 정리한 보고서</h1>
+  <p class="lede">한국형 가상 시민 시뮬레이션과 사회복지 이론을 결합한 박사 진학용 연구 주제 탐색. 가장 좁은 영역(지역사회복지)부터 사회복지 도메인 전체, 그리고 기술 시각까지 세 단계로 정리.</p>
 
   <div class="cards">
+
+    <a href="community-brief.html" class="card featured">
+      <span class="badge">최신</span>
+      <div class="card-eyebrow">Community Brief · v2.0</div>
+      <h2 class="card-title">지역사회복지로 본 열세 가지 후보</h2>
+      <p class="card-sub">한국 통합돌봄·통합사례관리·협의체·복지관·읍면동 안전망 한정</p>
+      <p class="card-desc">한국 지역사회복지(community-based social welfare)에 한정해 13개 논문 주제를 4 클러스터로 정리. 2026년 3월 시행 예정 돌봄통합지원법, 희망복지지원단 통합사례관리, 지역사회보장협의체 거버넌스, 사회복지관 3대 기능, 읍면동 찾아가는 보건복지서비스, 고독사 안부망 등 한국 지역 단위 정책 지형 위에 시뮬레이션을 접합.</p>
+      <div class="card-meta">
+        <span>13개 주제</span>
+        <span>4 클러스터</span>
+        <span>지역사회복지 한정</span>
+      </div>
+      <div class="card-arrow">→ 보고서 열기</div>
+    </a>
+
+    <a href="domain-brief.html" class="card">
+      <div class="card-eyebrow">Domain Brief · v1.2</div>
+      <h2 class="card-title">사회복지 이론과 한국 데이터로 본 열세 가지 후보</h2>
+      <p class="card-sub">사회복지 도메인 전반 — broader scope</p>
+      <p class="card-desc">사회복지 전반(지역사회복지 + 정책 커뮤니케이션 + 정치사회학적 정책 피드백 + 비수급 일반 등)에 걸쳐 13개 논문 주제를 4 클러스터로 정리. Bandura efficacy · Herd&amp;Moynihan 행정부담 · van Oorschot CARIN · Mettler policy feedback · Goffman 낙인 · Sampson 집합적 효능감 등 사회복지 이론 anchor.</p>
+      <div class="card-meta">
+        <span>13개 주제</span>
+        <span>4 클러스터</span>
+        <span>broader scope</span>
+      </div>
+      <div class="card-arrow">→ 보고서 열기</div>
+    </a>
 
     <a href="tech-brief.html" class="card">
       <div class="card-eyebrow">Technical Brief · v0.2</div>
@@ -221,28 +277,15 @@
       <div class="card-arrow">→ 보고서 열기</div>
     </a>
 
-    <a href="domain-brief.html" class="card">
-      <div class="card-eyebrow">Domain Brief · v1.2</div>
-      <h2 class="card-title">사회복지 이론과 한국 데이터로 본 열세 가지 후보</h2>
-      <p class="card-sub">사회복지학 · 사회정책 도메인 시각</p>
-      <p class="card-desc">기술 용어와 시뮬레이션 내부 메커니즘은 제외. 13개 논문 주제를 4 클러스터로 정리하고, 각 주제마다 사회복지 이론 anchor · 한국 데이터 검증 경로 · 예상되는 결과의 모양 · publishable potential까지. 한국어 중심.</p>
-      <div class="card-meta">
-        <span>13개 주제</span>
-        <span>4 클러스터</span>
-        <span>한국어 중심</span>
-      </div>
-      <div class="card-arrow">→ 보고서 열기</div>
-    </a>
-
   </div>
 
   <div class="note">
-    <span class="note-label">두 보고서의 차이</span>
-    같은 연구 방향을 두 시각에서 본 것. <strong>Technical Brief</strong>는 박사 지원·CS/HCI workshop 관점에서 시뮬레이션 방법론과 boundary condition을 강조하고, <strong>Domain Brief</strong>는 사회복지 학술지·도메인 전문가 관점에서 "어떤 사회복지 질문을 다룰 수 있고 한국 데이터로 어떻게 검증할지"를 강조.
+    <span class="note-label">세 보고서의 관계</span>
+    같은 연구 방향을 세 가지 영역 범위에서 정리. <strong>Community Brief</strong>(최신·v2.0)는 한국 지역사회복지에 한정한 가장 focus한 버전. <strong>Domain Brief</strong>는 사회복지 전반을 다룬 broader 버전. <strong>Tech Brief</strong>는 박사 지원·CS/HCI workshop 관점에서 시뮬레이션 방법론과 boundary condition을 강조. 사회복지 전문가는 Community Brief부터, CS 전문가는 Tech Brief부터 보면 자연스럽게 읽힙니다.
   </div>
 
   <footer>
-    Lee Ju-ho · 2026-05-20 · v1.2<br>
+    Lee Ju-ho · 2026-05 · v2.0<br>
     <a href="https://github.com/topar12/phd-prep-research-notes">github.com/topar12/phd-prep-research-notes</a>
   </footer>
 
