@@ -7,62 +7,53 @@ Personal research-strategy briefs written while preparing for U.S. PhD applicati
 
 ## 📄 Contents
 
-### `index.html` — Welfare-AI Research Brief v0.2 (2026-05-20)
+이 저장소에는 두 개의 보고서가 있습니다. 같은 연구 방향을 **두 가지 독자**에 맞춰 정리했습니다.
+
+### `index.html` — Technical Research Brief (v0.2)
 
 **MiroFish 기반 LLM-에이전트 사회 시뮬레이션 × 사회복지 이론 — 박사 진학용 연구 주제 탐색 보고서**
 
-12개 기반·주변 방법론 논문 + 7개 사회복지 학술 이론을 결합해 **19개 연구 주제 후보**를 5 클러스터로 정리한 strategy brief.
+CS·HCI·CSS 시각으로 정리한 보고서. 방법론(LLM-agent simulation, synthetic persona, boundary conditions)과 사회복지 이론을 결합해 **19개 연구 주제**를 5 클러스터로 탐색.
 
-#### 방법론 backbone (12편)
+- 방법론 backbone: Generative Agents · CAMEL · S3 · OASIS · Out of One Many · Self-Reports Grounding · Cross-Cultural Calibration · Boundary papers
+- 사회복지 이론 backbone: Bandura · Herd&Moynihan · van Oorschot · Mettler · Goffman/Spicker · Sampson
+- 평가축: 박사 어드미션 fit · 사회복지 가치 · 신선함 · 1년 PoC · 데이터 리스크 · 이론 anchor
 
-- **LLM-에이전트 사회 시뮬레이션 계보**: Generative Agents (Park 2023) · CAMEL (Li 2023) · S3 (Gao 2023) · OASIS (CAMEL-AI 2024)
-- **합성 페르소나 계열**: *Out of One, Many* (Argyle 2022) · *LLM Agents Grounded in Self-Reports* (2024) · *Cross-Cultural Survey Simulation with Calibrated Value Personas* (2026)
-- **Boundary / validity**: *LLM-Based Social Simulations Require a Boundary* (2026) · *AI Agents Alone Are Not Yet Sufficient* (2026) · *LLM Social Simulations Are a Promising Research Method* (2026)
-- **사회복지 ABM**: Sage 2019 외 2편
-- **데이터셋**: [Nemotron-Personas-Korea](https://huggingface.co/datasets/nvidia/Nemotron-Personas-Korea) (NVIDIA, 1M records / 7M personas / 252 districts)
+### `domain-brief.html` — Social Welfare Domain Brief (v1.2)
 
-#### 사회복지 이론 backbone (7개 · v0.2 신규)
+**박사 가서 하려는 사회복지 AI 연구 주제 — 사회복지 이론과 한국 데이터로 본 열세 가지 후보**
 
-| Theory | Anchor |
-| --- | --- |
-| Self-efficacy / political efficacy | Bandura 1977 · Easton |
-| Administrative Burden (3 dimensions) | Herd & Moynihan 2018 |
-| CARIN Deservingness | van Oorschot 2000 |
-| Policy Feedback | Mettler 2011 · Pierson 1993 |
-| Non-Take-Up (3-stage) | van Oorschot 1991 · Currie 2006 |
-| Stigma Management | Goffman 1963 · Spicker 1984 |
-| Collective Efficacy | Sampson, Raudenbush & Earls 1997 |
+사회복지학자/도메인 전문가용으로 다시 쓴 버전. 기술 용어·시뮬레이션 내부 메커니즘은 빼고, **"어떤 사회복지 질문을 다룰 수 있고 어떤 한국 데이터로 검증할 수 있는가"**의 관점으로만. 한국어 중심, 더 큰 글꼴, serif 타이포.
 
-#### 5 clusters · 19 topics
+- **13개 논문 주제**를 4 클러스터로 정리: 복지 신청·비수급(3) · 정책 커뮤니케이션과 시민 인식(3) · 사회복지 실무 접점(4) · 사회복지 시스템·지역사회·알고리즘(3)
+- 각 주제별로 무엇을 보는지, 어떻게 적용되는지(가상 시나리오 예시 포함), 한국 데이터로 어떻게 검증하는지, 왜 publishable한지
+- 한국 학술 자료 anchor: 허용창 외(2020) 비수급 동태적 모델 · Campbell&Ahn(2023) 한국 burden tolerance · Baekgaard et al.(2025) 한국 포함 7개국 척도 · 이병규(2024) · 홍승헌·황하(2024) · 강신원(2023)
+- 참고문헌 35편, 모두 자동 검증 프로세스 거침 (저자·연도·DOI 확인)
 
-- **α** 합성 페르소나 방법론 (T4, T5, T9, T11)
-- **β** 사회복지 응용 (T1, T2, T7, T8)
-- **γ** 정보·환경 디자인 (T3, T6, T10)
-- **δ** 사회복지사 의사결정 (T12)
-- **ε** 사회복지 이론 기반 효능·태도·수용성 (T13–T19) — v0.2 신규
+---
 
-#### Recommended TOP 3
+## 🔗 어떤 걸 먼저 보면 좋은가
 
-1. **T14 (Administrative Burden) × T1 (신청 여정) 결합** — CS workshop paper + 사회복지 학술지 paper 동시 산출
-2. **T15 CARIN deservingness 한국 cross-section** — 가장 신선
-3. **T4 algorithmic fidelity 한국 적용** — plan B 방법론
+- **사회복지·정책 시각**: `domain-brief.html` → 13개 논문 후보를 빠르게 훑고 흥미 있는 것부터.
+- **방법론·CS·HCI 시각**: `index.html` → MiroFish 계보의 위치, 합성 페르소나의 algorithmic fidelity, boundary condition.
+- **둘 다 읽기**: 같은 19개(혹은 13개) 주제를 두 시각에서 본 셈이 됩니다.
+
+GitHub Pages를 켜면 `https://topar12.github.io/phd-prep-research-notes/` 가 `index.html`로 떠서 바로 열립니다. `domain-brief.html`은 별도 path로 접근.
 
 ---
 
 ## 🛠 Tech notes
 
-- 단일 파일 정적 HTML. JS는 TOC active highlight 한 줄뿐.
-- 모바일 반응형 (breakpoints: 960px / 640px / 420px).
+- 단일 파일 정적 HTML. JS는 TOC active highlight 한 줄(`index.html`)만.
+- 모바일 반응형 — breakpoints: 960px / 720px / 640px / 420px.
 - 인쇄용 CSS 포함.
 - 외부 의존성 없음.
-
-GitHub Pages를 켜면 `https://<user>.github.io/phd-prep-research-notes/` 로 바로 열린다.
 
 ---
 
 ## 📌 사용 안내
 
-본 자료는 **개인 연구 탐색 노트**이며 외부 학술 인용을 의도하지 않는다.
+본 자료는 **개인 연구 탐색 노트**이며 외부 학술 인용을 의도하지 않습니다.
 보고서 안에서 정리한 framing(예: *population-calibrated synthetic personas*, *validity boundary*, *administrative burden in simulated welfare journeys*, *collective qualitative patterns*)만 차용해 주세요.
 
 — Lee Ju-ho · 2026-05-20
