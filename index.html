@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>사회복지 AI 연구 주제 탐색 — MiroFish 기반 LLM-에이전트 시뮬레이션 × 사회복지 이론</title>
+<style>
+  :root {
+    --bg: #fbfaf7;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --ink-muted: #4a4a4a;
+    --ink-soft: #767676;
+    --rule: #e4e0d8;
+    --rule-strong: #bcb6a8;
+    --accent: #2b4d6f;
+    --accent-soft: #eaf1f6;
+    --warn: #8b5a00;
+    --warn-soft: #fdf2d8;
+    --good: #335c3c;
+    --good-soft: #e6efe6;
+    --theory: #6b3d8f;
+    --theory-soft: #f1e8f5;
+    --code-bg: #f4f1eb;
+    --mono: "JetBrains Mono", "SF Mono", "Menlo", monospace;
+    --serif: "Iowan Old Style", "Charter", "Georgia", "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ============== LAYOUT ============== */
+  .layout {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 56px;
+    padding: 48px 40px 120px;
+  }
+
+  /* ============== SIDEBAR TOC ============== */
+  .toc {
+    position: sticky;
+    top: 32px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    font-size: 13px;
+    border-left: 2px solid var(--rule);
+    padding: 8px 0 8px 16px;
+  }
+  .toc-title {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .toc ol { list-style: none; padding: 0; margin: 0; counter-reset: toc; }
+  .toc li { counter-increment: toc; margin-bottom: 6px; line-height: 1.4; }
+  .toc li::before { content: counter(toc, upper-alpha) "."; color: var(--ink-soft); margin-right: 6px; font-family: var(--mono); }
+  .toc a { color: var(--ink-muted); text-decoration: none; display: inline-block; }
+  .toc a:hover { color: var(--accent); }
+
+  main { min-width: 0; }
+
+  /* ============== HEADER ============== */
+  .header {
+    border-bottom: 1px solid var(--rule-strong);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1.2;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--ink-muted);
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+  .meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+  }
+  .meta div { display: flex; gap: 8px; align-items: baseline; }
+  .meta .k { color: var(--ink-soft); }
+  .meta .v { color: var(--ink); }
+
+  /* ============== SECTIONS ============== */
+  section { margin-bottom: 64px; scroll-margin-top: 24px; }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.25;
+    margin: 0 0 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule-strong);
+    letter-spacing: -0.01em;
+  }
+  h2 .num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    margin-right: 12px;
+    letter-spacing: 0.1em;
+    vertical-align: middle;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 17px;
+    margin: 28px 0 12px;
+    color: var(--ink);
+  }
+  h4 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14px;
+    margin: 16px 0 8px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  p { margin: 0 0 16px; }
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 6px; }
+  strong { color: var(--ink); font-weight: 600; }
+  em { font-family: var(--serif); font-style: italic; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--code-bg); padding: 1px 6px; border-radius: 3px; word-break: break-all; }
+  a { word-break: break-word; }
+
+  /* ============== LEAD PARAGRAPH ============== */
+  .lead {
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .lead::first-letter {
+    font-size: 3.2em;
+    float: left;
+    line-height: 0.9;
+    padding: 4px 8px 0 0;
+    font-weight: 600;
+  }
+
+  /* ============== TL;DR ============== */
+  .tldr {
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .tldr h4 { margin-top: 0; color: var(--accent); }
+  .tldr ul { margin-bottom: 0; }
+
+  /* ============== CALLOUTS ============== */
+  .callout {
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin: 16px 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .callout.warn { background: var(--warn-soft); border-left: 4px solid var(--warn); color: #5c3d00; }
+  .callout.good { background: var(--good-soft); border-left: 4px solid var(--good); color: #1f3d27; }
+  .callout.theory { background: var(--theory-soft); border-left: 4px solid var(--theory); color: #4a2370; }
+  .callout strong { color: inherit; }
+  .callout-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ============== PAPER GRID ============== */
+  .paper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .paper-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 16px 18px;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .paper-card .pname {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .paper-card .pyear {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .paper-card .pcontrib { color: var(--ink-muted); margin-bottom: 8px; }
+  .paper-card .puse {
+    color: var(--ink);
+    border-top: 1px dashed var(--rule);
+    padding-top: 8px;
+    font-size: 13px;
+  }
+  .paper-card .puse::before {
+    content: "복지 결합 시 →";
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+  .paper-card.theory-card { border-left: 3px solid var(--theory); }
+  .paper-card.theory-card .pyear { color: var(--theory); }
+  .paper-card.theory-card .puse::before { content: "복지 시뮬레이션 결합 →"; color: var(--theory); }
+
+  /* ============== TOPIC CARDS ============== */
+  .topic {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 20px 0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .topic:hover { border-color: var(--rule-strong); box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .topic.theory-topic { border-left: 4px solid var(--theory); }
+  .topic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .topic-header-l { min-width: 0; flex: 1; }
+  .topic-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .topic.theory-topic .topic-id { color: var(--theory); }
+  .topic-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 21px;
+    line-height: 1.3;
+    margin: 4px 0;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .topic-theory-anchor {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--theory);
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+    padding: 3px 0;
+  }
+  .topic-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--code-bg);
+    color: var(--ink-muted);
+    border: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  .tag.methodology { background: #eaf1f6; color: #2b4d6f; border-color: #c5d6e2; }
+  .tag.application { background: #e6efe6; color: #335c3c; border-color: #c7dac9; }
+  .tag.novel { background: #f5e7d0; color: #6b4500; border-color: #e2c896; }
+  .tag.theory-tag { background: var(--theory-soft); color: var(--theory); border-color: #d6c0e0; }
+
+  .topic-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 16px;
+    margin: 10px 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .topic-row .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    padding-top: 3px;
+  }
+  .topic-row .content { color: var(--ink); min-width: 0; }
+  .topic-row.rq .content {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--accent);
+    padding-left: 12px;
+    border-left: 2px solid var(--accent);
+  }
+  .topic.theory-topic .topic-row.rq .content { color: var(--theory); border-left-color: var(--theory); }
+  .topic-boundary {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: var(--warn-soft);
+    border-radius: 4px;
+    font-size: 13px;
+    color: #5c3d00;
+    border-left: 3px solid var(--warn);
+  }
+  .topic-boundary .bcan { color: #1f3d27; }
+  .topic-boundary .bcant { color: #8b1f1f; }
+
+  /* ============== TABLES ============== */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 20px -4px;
+    padding: 0 4px;
+    border-radius: 4px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    min-width: 720px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  th {
+    background: var(--code-bg);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    border-bottom: 2px solid var(--rule-strong);
+    white-space: nowrap;
+  }
+  tbody tr:hover { background: rgba(0,0,0,0.015); }
+  td.rank { font-family: var(--mono); color: var(--accent); font-weight: 600; text-align: center; white-space: nowrap; }
+  td.score { font-family: var(--mono); text-align: center; white-space: nowrap; }
+  td.score.high { color: var(--good); font-weight: 600; }
+  td.score.mid { color: var(--warn); }
+  td.score.low { color: #8b1f1f; }
+  .topic-name-cell { font-weight: 600; }
+  .table-hint {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-top: 8px;
+  }
+
+  /* ============== TOP 3 ============== */
+  .top3 {
+    background: linear-gradient(180deg, var(--accent-soft) 0%, transparent 100%);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 16px 0;
+  }
+  .top3-rank {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  .top3 h3 { font-family: var(--serif); font-size: 22px; }
+
+  /* ============== FLOW ============== */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .flow-step {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 18px 20px;
+  }
+  .flow-step .when {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .flow-step h4 { margin: 0 0 8px; text-transform: none; letter-spacing: 0; font-size: 15px; color: var(--ink); }
+  .flow-step ul { font-size: 13.5px; margin: 0; padding-left: 18px; }
+
+  /* ============== FOOTER & REFS ============== */
+  footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule-strong);
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    line-height: 1.7;
+  }
+  footer a { color: var(--ink-soft); text-decoration: underline; text-decoration-color: var(--rule-strong); }
+  footer a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+  .refs ol { font-size: 13.5px; }
+  .refs li { margin-bottom: 8px; }
+  .refs a { color: var(--accent); text-decoration: none; }
+  .refs a:hover { text-decoration: underline; }
+
+  /* ============== CLUSTER HEADINGS ============== */
+  .cluster-head {
+    margin-top: 40px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    border-left: 4px solid var(--accent);
+  }
+  .cluster-head.theory-cluster { border-left-color: var(--theory); background: var(--theory-soft); }
+  .cluster-head h3 { margin: 0; font-size: 17px; }
+  .cluster-head .cluster-blurb { font-size: 13px; color: var(--ink-muted); margin-top: 4px; font-family: var(--sans); font-style: italic; }
+
+  /* ============== RESPONSIVE BREAKPOINTS ============== */
+
+  /* Tablet & smaller — collapse sidebar TOC */
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; gap: 24px; padding: 32px 24px 80px; }
+    .toc {
+      position: static;
+      max-height: none;
+      border-left: none;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+    }
+    .toc-title { font-size: 10px; margin-bottom: 8px; }
+    .toc ol { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+    .toc li { margin-bottom: 0; font-size: 12px; }
+    .toc li::before { font-size: 10px; }
+  }
+
+  /* Phone — major restructure */
+  @media (max-width: 640px) {
+    body { font-size: 15px; line-height: 1.6; }
+    .layout { padding: 24px 16px 64px; gap: 20px; }
+
+    /* Header */
+    .header { padding-bottom: 22px; margin-bottom: 32px; }
+    h1 { font-size: 26px; line-height: 1.25; letter-spacing: -0.005em; }
+    .subtitle { font-size: 16px; line-height: 1.45; margin-bottom: 18px; }
+    .meta { gap: 12px 20px; font-size: 11.5px; }
+    .meta div { gap: 6px; }
+    .eyebrow { font-size: 10px; margin-bottom: 12px; }
+
+    /* Sections */
+    section { margin-bottom: 44px; }
+    h2 { font-size: 21px; margin-bottom: 18px; padding-bottom: 10px; }
+    h2 .num { font-size: 11px; margin-right: 8px; display: inline-block; }
+    h3 { font-size: 15.5px; margin: 22px 0 10px; }
+    h4 { font-size: 12.5px; }
+
+    /* Lead */
+    .lead { font-size: 17px; line-height: 1.55; }
+    .lead::first-letter { font-size: 2.6em; padding: 2px 6px 0 0; }
+
+    /* TLDR & callouts */
+    .tldr { padding: 16px 18px; }
+    .callout { padding: 14px 16px; font-size: 13.5px; }
+
+    /* Paper cards */
+    .paper-grid { gap: 12px; }
+    .paper-card { padding: 14px 16px; font-size: 13px; }
+    .paper-card .pname { font-size: 14px; }
+
+    /* Topic cards */
+    .topic { padding: 18px 18px; }
+    .topic-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      padding-bottom: 10px;
+    }
+    .topic-title { font-size: 18px; line-height: 1.3; }
+    .topic-tags { gap: 4px; }
+    .tag { font-size: 9.5px; padding: 2px 6px; }
+    .topic-theory-anchor { font-size: 10px; }
+
+    /* Topic rows — stack vertically */
+    .topic-row {
+      grid-template-columns: 1fr;
+      gap: 3px;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    .topic-row .label {
+      padding-top: 0;
+      font-size: 9.5px;
+      color: var(--accent);
+    }
+    .topic-row.rq .content {
+      font-size: 15px;
+      padding-left: 10px;
+    }
+    .topic-boundary { font-size: 12.5px; padding: 10px 12px; }
+
+    /* Tables */
+    .table-wrap {
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 0;
+      margin: 16px -16px;
+      max-width: calc(100% + 32px);
+    }
+    .table-wrap::after {
+      content: "← 좌우 스크롤 →";
+      display: block;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-soft);
+      padding: 6px;
+      border-top: 1px dashed var(--rule);
+    }
+    table { font-size: 12px; min-width: 760px; }
+    th, td { padding: 8px 10px; }
+
+    /* TOP3 */
+    .top3 { padding: 18px 20px; }
+    .top3 h3 { font-size: 18px; }
+    .top3-rank { font-size: 11px; }
+
+    /* Flow */
+    .flow { gap: 12px; }
+    .flow-step { padding: 14px 16px; }
+    .flow-step h4 { font-size: 14px; }
+    .flow-step ul { font-size: 13px; }
+
+    /* Cluster head */
+    .cluster-head { padding: 12px 16px; }
+    .cluster-head h3 { font-size: 15px; }
+    .cluster-head .cluster-blurb { font-size: 12.5px; }
+
+    /* Footer */
+    footer { font-size: 11px; margin-top: 60px; }
+    .refs ol { font-size: 13px; padding-left: 18px; }
+  }
+
+  /* Small phone */
+  @media (max-width: 420px) {
+    body { font-size: 14.5px; }
+    .layout { padding: 18px 14px 50px; }
+    h1 { font-size: 23px; }
+    .subtitle { font-size: 15px; }
+    .lead { font-size: 16px; }
+    .lead::first-letter { font-size: 2.4em; }
+    h2 { font-size: 19px; }
+    h3 { font-size: 15px; }
+    .topic { padding: 16px 16px; }
+    .topic-title { font-size: 17px; }
+    .top3 { padding: 16px 18px; }
+    .top3 h3 { font-size: 17px; }
+    .meta { gap: 10px 16px; }
+  }
+
+  /* Print */
+  @media print {
+    .layout { display: block; padding: 0; }
+    .toc { display: none; }
+    .topic, .top3, .flow-step, .paper-card { break-inside: avoid; page-break-inside: avoid; }
+    .table-wrap::after { display: none; }
+    body { font-size: 11pt; background: white; }
+    a { color: var(--ink); }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- ===== SIDEBAR TOC ===== -->
+<aside class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#s-summary">요약</a></li>
+    <li><a href="#s-base">기반 방법론 지도</a></li>
+    <li><a href="#s-nemotron">Nemotron-Personas-Korea</a></li>
+    <li><a href="#s-boundary">4가지 boundary 조건</a></li>
+    <li><a href="#s-topics">주제 후보 19선</a></li>
+    <li><a href="#s-matrix">비교 매트릭스</a></li>
+    <li><a href="#s-top3">추천 TOP 3</a></li>
+    <li><a href="#s-flow">6월~8월 흐름</a></li>
+    <li><a href="#s-pitfalls">피해야 할 함정</a></li>
+    <li><a href="#s-refs">참고 자료</a></li>
+  </ol>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="eyebrow">Research Strategy Brief · Internal · Lee Ju-ho · v0.2</div>
+  <h1>MiroFish 기반 LLM-에이전트 시뮬레이션 × 사회복지 이론 — 박사 진학용 연구 주제 탐색</h1>
+  <p class="subtitle">12개 기반·주변 방법론 논문 + 7개 사회복지 학술 이론(효능감·행정부담·deservingness·non-take-up·policy feedback·낙인·collective efficacy)을 결합해, 박사 진학용·논문 가치가 있는 19개 주제를 도출한 탐색 보고서.</p>
+  <div class="meta">
+    <div><span class="k">날짜</span><span class="v">2026-05-20</span></div>
+    <div><span class="k">대상</span><span class="v">이주호 · 6월 본격 시작</span></div>
+    <div><span class="k">v0.2 추가</span><span class="v">사회복지 이론 backbone 7개</span></div>
+  </div>
+</header>
+
+<!-- ===== A. SUMMARY ===== -->
+<section id="s-summary">
+  <h2><span class="num">A</span>요약</h2>
+  <p class="lead">v0.2의 핵심은 <strong>사회복지학에서 정착된 이론(efficacy, administrative burden, welfare deservingness, non-take-up, policy feedback, stigma management, collective efficacy)을 LLM-에이전트 시뮬레이션의 분석 anchor로 삼는 것</strong>이다. 이렇게 하면 "한국 복지 시뮬레이션 한 번 돌려봤습니다" 수준이 아니라 "<em>이 이론이 시뮬레이션 환경에서 어떻게 작동하는가</em>"라는 명확한 학술적 기여가 생긴다. 결과적으로 박사 어드미션 서사도 강해지고, <em>Social Service Review</em>·<em>Journal of Social Policy</em>·<em>Administration in Social Work</em> 같은 사회복지 학술지에서도 읽힐 수 있는 형태가 된다.</p>
+
+  <div class="tldr">
+    <h4>한 페이지 요약 v0.2</h4>
+    <ul>
+      <li><strong>5개 클러스터, 19개 주제</strong>: α 합성페르소나 방법론(4) · β 사회복지 응용(4) · γ 정보·환경 디자인(3) · δ 사회복지사(1) · <strong>ε 사회복지 이론 기반(7) — v0.2 신규</strong>.</li>
+      <li><strong>ε 클러스터의 이론 backbone</strong>: Bandura self-efficacy · Herd&amp;Moynihan administrative burden · van Oorschot CARIN deservingness · van Oorschot non-take-up · Mettler policy feedback · Goffman/Spicker stigma management · Sampson collective efficacy.</li>
+      <li><strong>업데이트된 추천 TOP 3</strong>: <em>1순위 T14 administrative burden × T1 신청여정 결합</em>(사회복지 학술지 + CS 워크숍 동시 publishable) · <em>2순위 T15 CARIN deservingness 한국 적용</em>(가장 신선) · <em>3순위 T4 algorithmic fidelity 단독</em>(plan B).</li>
+      <li><strong>boundary 4조건</strong>(예측금지 · variance 보고 · 환경 명시 · face validity)은 그대로 — 모든 19개 주제의 공통 인프라.</li>
+    </ul>
+  </div>
+
+  <p>v0.1 대비 차이는 두 가지다. (1) 사회복지 이론 backbone을 명시한 ε 클러스터를 새로 추가해 "논문 쓸 가치"가 높은 주제들을 분리했다. (2) 모바일 가독성을 개선했다(topic row stack, 표 가로 스크롤, 폰트 스케일).</p>
+</section>
+
+<!-- ===== B. BASE METHODOLOGY ===== -->
+<section id="s-base">
+  <h2><span class="num">B</span>기반 방법론 지도 — MiroFish 계보 + 사회복지 이론</h2>
+
+  <p>본 보고서는 두 학문 계보를 명시적으로 결합한다. (1) <strong>LLM-에이전트 사회 시뮬레이션 계보</strong>(Generative Agents → CAMEL → S3 → OASIS, MiroFish는 OASIS의 application). (2) <strong>합성 페르소나 계보</strong>(Out of One Many → Self-reports grounding → Cross-cultural calibration). 그리고 v0.2에서 (3) <strong>사회복지 이론 backbone</strong>이 추가되었다. boundary 논문 2편이 이 모든 결합의 한계선을 그어준다.</p>
+
+  <h3>B.1 LLM-에이전트 시뮬레이션 4대 기반 논문</h3>
+  <div class="paper-grid">
+    <div class="paper-card">
+      <div class="pname">Generative Agents</div>
+      <div class="pyear">Park et al. · 2023 · arxiv 2304.03442</div>
+      <div class="pcontrib">25개 에이전트에 memory + reflection + planning을 붙여 일상 루틴·emergent 사회 행동(밸런타인 파티 자율 확산). ablation으로 세 구성요소의 believability 기여 확인.</div>
+      <div class="puse">사회복지에서 시간이 누적되는 "신청 여정"·"안부 반복 접촉"·"사례관리 장기 흐름" 시뮬레이션의 기술적 토대.</div>
+    </div>
+    <div class="paper-card">
+      <div class="pname">CAMEL</div>
+      <div class="pyear">Li et al. · NeurIPS 2023 · arxiv 2303.17760</div>
+      <div class="pcontrib">role-playing communicative agents + inception prompting. 다자간 대화로 task 수행. 오픈소스.</div>
+      <div class="puse">사회복지사 ↔ 잠재 수혜자 ↔ 가족 ↔ 행정담당자 4자 상담 시뮬레이션. 대화 단절 지점 매핑.</div>
+    </div>
+    <div class="paper-card">
+      <div class="pname">S3</div>
+      <div class="pyear">Gao et al. · 2023 · arxiv 2307.14984</div>
+      <div class="pcontrib">LLM agent에 감정·태도·행동을 부여하고 social network에서 정보·태도·감정 전파. real network 데이터 부분 검증.</div>
+      <div class="puse">복지 메시지가 SNS에서 어떻게 받아들여지고 변형되는가. 어떤 메시지가 stigma를 증폭하나.</div>
+    </div>
+    <div class="paper-card">
+      <div class="pname">OASIS</div>
+      <div class="pyear">CAMEL-AI · 2024 · arxiv 2411.11581</div>
+      <div class="pcontrib">백만 에이전트 규모, X/Reddit 일반화 framework. dynamic environment + recommendation system + action space(팔로우·댓글·공유). 정보 확산·집단 양극화·군중효과 재현. <strong>MiroFish의 직접 기반</strong>.</div>
+      <div class="puse">복지 정보 추천 알고리즘의 노출 격차, 메시지 환경별 확산 양상.</div>
+    </div>
+  </div>
+
+  <h3>B.2 합성 페르소나 핵심 3편</h3>
+  <div class="paper-grid">
+    <div class="paper-card">
+      <div class="pname">Out of One, Many</div>
+      <div class="pyear">Argyle et al. · 2022 · arxiv 2209.06899</div>
+      <div class="pcontrib">GPT-3에 사회인구학 backstory를 conditioning하면 미국 설문 응답 분포를 그룹별로 재현. <strong>algorithmic fidelity</strong> 개념 도입 — 모델 편향이 fine-grained, demographically correlated하면 silicon sample이 성립.</div>
+      <div class="puse">한국 복지 응답에서 Nemotron의 algorithmic fidelity 측정 자체가 RQ가 된다.</div>
+    </div>
+    <div class="paper-card">
+      <div class="pname">LLM Agents Grounded in Self-Reports</div>
+      <div class="pyear">2024 · arxiv 2411.10109</div>
+      <div class="pcontrib">1,052명을 인구통계 + 2시간 인터뷰 + GSS + Big Five로 grounding. 정확도 86% vs demographic-only 74%. <strong>집단간 정확도 disparity 감소</strong>.</div>
+      <div class="puse">한국 노인실태조사·KGSS·KLoSA로 grounding 시 정확도·disparity 효과 측정.</div>
+    </div>
+    <div class="paper-card">
+      <div class="pname">Cross-Cultural Survey Simulation</div>
+      <div class="pyear">2026 · arxiv 2605.16193</div>
+      <div class="pcontrib">가치 척도(value)로 페르소나 calibrate. cross-country prediction error 감소, 저표상 인구에서 가장 큰 개선.</div>
+      <div class="puse">WVS/KGSS의 한국 가치 응답으로 calibrate → 한국 복지 응답의 시뮬레이션 fidelity.</div>
+    </div>
+  </div>
+
+  <h3>B.3 Boundary 논문 2편 — 가장 중요</h3>
+  <div class="paper-grid">
+    <div class="paper-card">
+      <div class="pname">LLM-Based Social Simulations Require a Boundary</div>
+      <div class="pyear">2026 · arxiv 2506.19806</div>
+      <div class="pcontrib">LLM은 "average persona"로 수렴(homogeneous). 변동성 부족하면 결과가 부풀려진다. <strong>"집단 정성 패턴"은 주장 가능, "개인 행동 specificity"는 주장 불가</strong>. variance 보고 의무화.</div>
+      <div class="puse">모든 19개 주제는 이 framework 안에서 framing. variance + mean 동시 보고는 표준 인프라.</div>
+    </div>
+    <div class="paper-card">
+      <div class="pname">AI Agents Alone Are Not Yet Sufficient for Social Simulation</div>
+      <div class="pyear">2026 · arxiv 2603.00113</div>
+      <div class="pcontrib">에이전트-에이전트 대화만으로 부족. <strong>환경 동역학·스케줄링·정보 노출 구조</strong>가 결과를 좌우. "environment-involved Markov game"으로 framing. 메커니즘 명시·감사 가능하게.</div>
+      <div class="puse">단순 대화 시뮬레이션 X. <em>안내문 노출 시점 · 신청 마감 · 대기 시간 · 행정 절차</em>를 명시 환경 변수로.</div>
+    </div>
+  </div>
+
+  <h3>B.4 신선한 응용 (사회복지학 결합용 보조)</h3>
+  <div class="paper-grid">
+    <div class="paper-card">
+      <div class="pname">LLM Social Simulations Are a Promising Research Method</div>
+      <div class="pyear">2026 · arxiv 2504.02234</div>
+      <div class="pcontrib">현재 결과는 제한적이지만 5가지 tractable challenge를 풀면 사회과학 pilot/exploratory 연구로 유효.</div>
+      <div class="puse">SOP motivation 단락. "exploratory tool" framing의 학술 근거.</div>
+    </div>
+    <div class="paper-card">
+      <div class="pname">ABM: Value Added to Social Work Research</div>
+      <div class="pyear">Sage 2019 · doi 10.1177/1044389419842764</div>
+      <div class="pcontrib">사회복지 연구에서 ABM이 왜 가치 있는지. 개인·가족·지역사회·제도의 복합체계는 단변량으로 설명 불가.</div>
+      <div class="puse">사회복지학 교수에게 설명할 때의 학술 토대. ABM과 LLM-agent simulation의 연결고리.</div>
+    </div>
+    <div class="paper-card">
+      <div class="pname">Nonlinearity in Social Service Evaluation</div>
+      <div class="pyear">SWR · 35-1-20</div>
+      <div class="pcontrib">사회서비스 평가의 비선형성·복잡성. 작은 조건 변화가 큰 결과 차이를 만들 수 있음.</div>
+      <div class="puse">"문구 한 줄·접점 하나 차이가 집단별로 다른 결과를 만든다"는 본 연구 motivation의 사회복지학적 근거.</div>
+    </div>
+  </div>
+
+  <h3>B.5 사회복지 이론 backbone — v0.2 신규</h3>
+  <p>아래 7개 이론은 ε 클러스터(주제 T13–T19)의 분석 anchor다. 각 이론은 정착된 학술 문헌·측정 도구·핵심 명제가 있어, simulation 결과를 곧바로 학술적 contribution으로 끌어올린다.</p>
+
+  <div class="paper-grid">
+    <div class="paper-card theory-card">
+      <div class="pname">Self-Efficacy</div>
+      <div class="pyear">Bandura · 1977 · Psychological Review</div>
+      <div class="pcontrib">"내가 이 행동을 해낼 수 있다"는 신념이 행동을 예측. 사회복지 맥락에서는 신청 행동·도움 요청 행동의 핵심 변수. Easton의 정치 효능감(internal vs external)과 결합되면 시민-시스템 관계까지 확장.</div>
+      <div class="puse">메시지 frame이 페르소나의 self-efficacy를 어떻게 변화시키고, 그게 신청 의향에 어떻게 이어지는가. <strong>→ T13</strong></div>
+    </div>
+    <div class="paper-card theory-card">
+      <div class="pname">Administrative Burden</div>
+      <div class="pyear">Herd & Moynihan · 2018 · Russell Sage</div>
+      <div class="pcontrib">행정 부담의 3차원: <strong>Learning costs</strong>(제도를 아는 데 드는 비용) · <strong>Compliance costs</strong>(요구사항을 충족하는 비용) · <strong>Psychological costs</strong>(낙인·자존감 손실 등). 같은 정책이라도 이 분포가 다르면 take-up이 다르다.</div>
+      <div class="puse">한국 복지 신청 시나리오에서 3차원 분포가 어떤 집단을 어디서 멈추게 하는가 — 가장 publishable. <strong>→ T14</strong></div>
+    </div>
+    <div class="paper-card theory-card">
+      <div class="pname">CARIN Deservingness</div>
+      <div class="pyear">van Oorschot · 2000 · Policy & Politics 28(1)</div>
+      <div class="pcontrib">"누가 받을 자격이 있는가" 판단의 5차원: <strong>C</strong>ontrol(상황 통제력 부재) · <strong>A</strong>ttitude(태도) · <strong>R</strong>eciprocity(상호성) · <strong>I</strong>dentity(정체성 근접) · <strong>N</strong>eed(필요 정도). 국가별로 weight가 다르다는 cross-cultural 결과 다수.</div>
+      <div class="puse">한국 페르소나는 5차원의 weight를 어떻게 부여하는가. 자신/타인 적용 시 차이는? <strong>→ T15</strong></div>
+    </div>
+    <div class="paper-card theory-card">
+      <div class="pname">Policy Feedback</div>
+      <div class="pyear">Mettler · 2002, 2011 · Pierson · 1993</div>
+      <div class="pcontrib">"정책이 시민을 만든다" — 정책 경험이 시민의 정치 신뢰·정책 효능감·참여를 longitudinal하게 변화시킨다. Mettler의 <em>The Submerged State</em>가 대표.</div>
+      <div class="puse">복지 신청·수급·거절 경험이 페르소나의 시스템 신뢰를 어떻게 변화시키는가, longitudinal로. <strong>→ T16</strong></div>
+    </div>
+    <div class="paper-card theory-card">
+      <div class="pname">Non-Take-Up</div>
+      <div class="pyear">van Oorschot · 1991, Currie · 2006</div>
+      <div class="pcontrib">자격 있는 사람이 신청하지 않는 현상. 3단계 분해: <strong>Information</strong>(제도 인지) · <strong>Threshold</strong>(자격 판단) · <strong>Motivation</strong>(신청 결심). 단계별 손실률이 정책 설계의 핵심.</div>
+      <div class="puse">한국 복지 사각지대에서 비수급은 어느 단계에서 가장 큰 손실인가. 정책 유형별 분포는? <strong>→ T17</strong></div>
+    </div>
+    <div class="paper-card theory-card">
+      <div class="pname">Stigma Management</div>
+      <div class="pyear">Goffman · 1963, Spicker · 1984</div>
+      <div class="pcontrib">Goffman의 stigma(spoiled identity), Spicker의 welfare stigma 3유형(<em>personal · social · stigma of receipt</em>). 수치심을 회피하기 위한 행동 전략: passing, withdrawal, advocacy.</div>
+      <div class="puse">한국 페르소나의 stigma 회피 행동 분포. 집단별로 어떤 전략이 우세한가. <strong>→ T18</strong></div>
+    </div>
+    <div class="paper-card theory-card">
+      <div class="pname">Collective Efficacy</div>
+      <div class="pyear">Sampson et al. · 1997 · Science 277</div>
+      <div class="pcontrib">지역사회의 <strong>social cohesion + informal social control</strong>이 결합된 효능감. 이웃·통장·이장이 위기가구를 발견·중재할 수 있게 만드는 메커니즘. 폭력·아동복지·도시 빈곤에서 검증.</div>
+      <div class="puse">페르소나 네트워크의 collective efficacy 수준이 위기가구 발견 likelihood에 미치는 영향. <strong>→ T19</strong></div>
+    </div>
+  </div>
+
+  <div class="callout theory">
+    <span class="callout-label">왜 이론 backbone이 필수인가</span>
+    LLM-에이전트 시뮬레이션이 "그럴듯해 보이는 결과"를 만들기 쉬운 만큼, reviewer는 "그래서 학술적 기여는 뭔가"라고 묻는다. 정착된 이론을 명시하면 결과의 해석 frame이 처음부터 분명해진다. 예: T14는 "Herd&amp;Moynihan의 3차원 burden이 한국 시뮬레이션 환경에서도 유의미한 dropout 분포 차이를 만드는가"라는 검증 가능한 명제로 직접 닫힌다.
+  </div>
+</section>
+
+<!-- ===== C. NEMOTRON ===== -->
+<section id="s-nemotron">
+  <h2><span class="num">C</span>Nemotron-Personas-Korea — 자산 분석과 한계</h2>
+
+  <p>이 데이터셋은 본 연구의 한국적 차별성을 결정짓는 핵심 자산이다. NVIDIA가 KOSIS·대법원·국민건강보험공단·한국농촌경제연구원·NAVER Cloud의 공개 자료를 합성해 만든 1M 레코드 / 7M 페르소나 / 26 필드 / 17개 시도 × 252개 시군구. CC BY 4.0.</p>
+
+  <h4>구조 (26 필드)</h4>
+  <ul>
+    <li><strong>인구통계·지리 (12)</strong>: sex · age (19~99) · marital_status · military_status · family_type (39 유형) · housing_type (6) · education_level (7) · bachelors_field (11) · occupation · district (252) · province (17) · country</li>
+    <li><strong>페르소나 자연어 (7)</strong>: professional · sports · arts · travel · culinary · family · persona summary</li>
+    <li><strong>속성 (6)</strong>: cultural_background · skills_and_expertise (+list) · hobbies_and_interests (+list) · career_goals</li>
+    <li><strong>식별자 (1)</strong>: uuid</li>
+  </ul>
+
+  <h4>본 연구에 유리한 점</h4>
+  <ul>
+    <li><strong>252개 시군구 지리 정밀도</strong> — 한국 복지서비스가 지자체 단위 운영이므로 지역 격차 분석에 직접 사용.</li>
+    <li><strong>가구 유형 39 카테고리</strong> — 1인가구/조손/한부모 등 사회복지 표상에 적합한 입도.</li>
+    <li><strong>학력 7단계 + 직업 + 가구형태 + 주거형태</strong> 동시 — 취약계층 페르소나 샘플링 자유.</li>
+    <li><strong>자연어 persona 필드 7개</strong> — LLM agent에 직접 input. 별도 prompt engineering 불필요.</li>
+  </ul>
+
+  <div class="callout warn">
+    <span class="callout-label">반드시 명시할 한계 (boundary 조건의 출처)</span>
+    <ul style="margin: 0;">
+      <li><strong>성격(personality) 필드 부재</strong> — Big Five 같은 차원 없음. 동일 인구통계 페르소나가 동질적으로 수렴할 위험. LLM "average persona" 문제와 곱해짐.</li>
+      <li><strong>19세 미만 부재</strong> — 아동복지·학교사회복지·미성년 가족돌봄청년 직접 적용 불가.</li>
+      <li><strong>독립성 가정</strong> — occupation이 sex·income·education·major 독립을 가정. 한국 노동시장의 성별·세대 상호작용 누락 → 시뮬레이션 결과의 집단별 편향 가능.</li>
+      <li><strong>2024년 12월 기준 NHIS 데이터</strong> — 데이터 timeliness 한계.</li>
+      <li><strong>합성 데이터</strong> — 실제 시민 응답 아님. 모든 결과는 "잠재 반응 탐색"으로 framing.</li>
+    </ul>
+  </div>
+
+  <h4>3-tier grounding 결합 전략</h4>
+  <p>"Nemotron 단독 페르소나"는 demographic-only baseline에 가깝다(self-reports 논문 기준 74% 정확도). 한국 복지 시뮬레이션에서는 3단계로 grounding을 쌓아야 한다.</p>
+  <ol>
+    <li><strong>Tier 1 (baseline)</strong>: Nemotron persona 그대로</li>
+    <li><strong>Tier 2 (value)</strong>: + WVS/KGSS의 value 응답으로 calibrate (Cross-Cultural Survey Simulation 방식)</li>
+    <li><strong>Tier 3 (self-reports)</strong>: + 2023 노인실태조사·KLoSA의 self-report 응답 일부를 페르소나에 주입</li>
+  </ol>
+  <p>3-tier 비교 자체가 한국에서 처음 수행되는 실험이고, 그것만으로 workshop paper 한 편 분량이다 (T4·T5·T9 참조).</p>
+</section>
+
+<!-- ===== D. BOUNDARY CONDITIONS ===== -->
+<section id="s-boundary">
+  <h2><span class="num">D</span>반드시 지켜야 할 4가지 boundary 조건</h2>
+
+  <p>boundary 논문 2편을 한국 복지 도메인에 적용하면 다음 4가지로 압축된다. 이걸 어기면 어떤 주제를 골라도 박사 어드미션에서 통하지 않는다.</p>
+
+  <div class="callout good">
+    <span class="callout-label">B1 — 예측을 주장하지 않는다</span>
+    <strong>OK</strong>: "메시지 프레임에 따라 집단 수준에서 어떤 반응 양상이 나타나는가를 탐색한다."<br>
+    <strong>NOT OK</strong>: "AI가 신청 의향을 예측한다." "고독사를 사전 탐지한다." "여론을 예측한다."<br>
+    MiroFish README의 "predict future trajectories"를 그대로 차용하면 안 된다.
+  </div>
+
+  <div class="callout good">
+    <span class="callout-label">B2 — variance를 mean과 동시에 보고한다</span>
+    모든 결과 표에서 <em>평균</em>만 보여주면 reviewer가 즉시 "<em>average persona</em>"를 의심한다. <strong>group-level standard deviation, JS divergence, variance ratio (model vs. human)</strong>를 같이 보고하고, variance가 낮은 영역은 결과 해석에서 명시적으로 제한한다.
+  </div>
+
+  <div class="callout good">
+    <span class="callout-label">B3 — 환경·스케줄링·노출 구조를 명시적으로 설계한다</span>
+    에이전트-에이전트 대화만 돌리지 않는다. <strong>안내문 노출 시점, 신청 마감, 대기 시간, 가족·이웃 접점, 행정 절차 단계</strong>를 명시한 environment를 만들고, 그 변화가 결과를 어떻게 바꾸는지 ablation으로 보인다. "AI Agents Alone Are Not Yet Sufficient"의 처방.
+  </div>
+
+  <div class="callout good">
+    <span class="callout-label">B4 — face validity를 도메인 전문가가 채점한다</span>
+    사회복지사·교수 2명 이상이 결과 로그의 <strong>face validity</strong>(현실적으로 말이 되는가)를 코딩한다. 가능하면 비가족 외부 전문가 1명 이상. 빠지면 "LLM 시연 데모"로 읽힌다.
+  </div>
+
+  <p>이 4 조건은 모든 19개 주제의 평가 인프라이고, 별도 챕터를 둘 가치가 있다. 첫 4주는 주제 선택과 무관하게 "<strong>한국 복지 도메인용 LLM 시뮬레이션 평가 인프라</strong>"를 만드는 것이 합리적이다 (§H 흐름 참조).</p>
+</section>
+
+<!-- ===== E. TOPIC CANDIDATES ===== -->
+<section id="s-topics">
+  <h2><span class="num">E</span>주제 후보 19선 — 5 클러스터</h2>
+
+  <p>각 주제에 <strong>기반 논문 → 핵심 방법론 → 사회복지 RQ → 평가 → boundary</strong>를 같이 명시. ε 클러스터(v0.2 신규)는 보라색 left-border로 표시.</p>
+
+  <!-- CLUSTER α : METHODOLOGY -->
+  <div class="cluster-head">
+    <h3>α. 합성 페르소나 방법론 클러스터 — 가장 박사 어드미션-friendly</h3>
+    <div class="cluster-blurb">CS/HCI/CSS workshop paper로 가장 쉽게 published. 사회복지 도메인 협업 없이도 학술적으로 닫힘.</div>
+  </div>
+
+  <div class="topic" id="t4">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T4</div>
+        <div class="topic-title">한국 복지 설문 응답의 "algorithmic fidelity" 측정</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag methodology">methodology</span>
+        <span class="tag">Out of One, Many</span>
+        <span class="tag">Nemotron</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">Nemotron-Personas-Korea로 생성한 silicon sample은 KGSS·KLoSA·2023 노인실태조사의 실제 응답 분포를 어떤 항목에서 얼마나 재현하는가? gap이 큰 집단·문항은 어떤 특성을 가지는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">10~30개 복지·서비스 접근 항목에 대해 silicon sample 생성 → group-level MAE / JS divergence / variance ratio 비교. sex × age × education × province 4-way 분해.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content"><em>Out of One, Many</em> 한국 replication + 사회복지 항목으로 확장.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">KGSS/KLoSA 공개 microdata. 분포 일치도 + subgroup fidelity gap heatmap.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">방법론 단독 6~8pp workshop. 사회복지 도메인 협업 부족해도 paper로 성립. <strong>가장 빠른 산출물</strong>.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> Nemotron의 algorithmic fidelity가 어디서 잘/깨지는가의 양상.
+      &nbsp;<strong class="bcant">✗</strong> 한국 여론 예측. 개인 응답 맞히기.
+    </div>
+  </div>
+
+  <div class="topic" id="t5">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T5</div>
+        <div class="topic-title">노인 페르소나 grounding 효과 — 3-tier 비교</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag methodology">methodology</span>
+        <span class="tag">Self-Reports</span>
+        <span class="tag">노인실태조사</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">한국 노인 복지 시뮬레이션에서 demographics-only(Tier 1) vs Nemotron(Tier 2) vs Nemotron+노인실태조사 grounding(Tier 3)는 응답 정확도와 집단간 disparity를 어떻게 변화시키는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">2023 노인실태조사 일부 항목을 페르소나에 grounding → held-out 항목으로 평가. test-retest reliability 측정. 도시/농촌·연령대·학력 disparity의 tier별 비교.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content"><em>Self-Reports Grounding</em>(arxiv 2411.10109) 한국 replication. 미국 GSS 대신 노인실태조사·KLoSA.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">test-retest 대비 정확도 · 집단간 disparity 감소율 · variance 유지율.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">한국 노인복지 특화 방법론. 노인실태조사 활용. 사회복지 교수가 "진짜 사회복지 연구"로 인정.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> grounding tier별 정확도·disparity 변화.
+      &nbsp;<strong class="bcant">✗</strong> 개별 노인의 응답 예측.
+    </div>
+  </div>
+
+  <div class="topic" id="t9">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T9</div>
+        <div class="topic-title">Value-grounded 한국 복지 페르소나 — WVS/KGSS calibration</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag methodology">methodology</span>
+        <span class="tag">Cross-Cultural</span>
+        <span class="tag novel">novel</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">WVS/KGSS의 한국 가치 응답으로 Nemotron persona를 calibrate하면 복지 신청 의향·낙인 응답·서비스 신뢰도에서 어떤 개선이 나타나는가? 가장 큰 개선은 어떤 가치 차원에서?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">Schwartz value · WVS dimensions로 페르소나에 value vector 부여 → 복지 응답 시뮬레이션 → KGSS 실측치와 비교.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content"><em>Cross-Cultural Survey Simulation</em>(arxiv 2605.16193) 직접 확장.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">국가내 cross-section prediction error 감소 · 저표상 집단 개선 측정.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">신선. 한국 단독 cross-section은 reference 논문에서 시도된 적 없음. 권리/시혜 framing과 직결.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> value calibration의 fidelity 효과.
+      &nbsp;<strong class="bcant">✗</strong> 가치관으로 복지 행동을 예측.
+    </div>
+  </div>
+
+  <div class="topic" id="t11">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T11</div>
+        <div class="topic-title">한국 복지 시뮬레이션의 validity boundary 측정</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag methodology">methodology</span>
+        <span class="tag">Boundary</span>
+        <span class="tag">variance</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">한국 복지 도메인에서 LLM 시뮬레이션의 variance는 인간 모집단 variance와 얼마나 일치하는가? 어떤 질문 유형·도메인·집단에서 "average persona" 붕괴가 가장 심한가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content"><em>Require a Boundary</em> framework(variance + mean 동시)을 한국 복지 시뮬레이션 5~6개 시나리오에 적용. sd ratio · JS divergence.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content"><em>Require a Boundary</em>(arxiv 2506.19806) 한국 도메인 적용.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">자체가 평가 framework. systematic audit이 결과.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">박사 어드미션에서 가장 책임감 있게 읽힘 — "<em>이 학생은 hype에 휘둘리지 않는다</em>". 모든 다른 주제의 토대.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 한국 복지 LLM 시뮬레이션의 신뢰 영역·불신뢰 영역 지도.
+      &nbsp;<strong class="bcant">✗</strong> 자체 framework로 신뢰성 자체 정당화 (외부 데이터 비교 필수).
+    </div>
+  </div>
+
+  <!-- CLUSTER β : APPLICATION -->
+  <div class="cluster-head">
+    <h3>β. 사회복지 응용 클러스터 — 가장 사회복지학적</h3>
+    <div class="cluster-blurb">기존 6개 후보를 MiroFish 계보로 재정렬. 사회복지사·교수 자문과 가장 잘 결합.</div>
+  </div>
+
+  <div class="topic" id="t1">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T1</div>
+        <div class="topic-title">다단계 복지 신청 여정 시뮬레이션 — longitudinal dropout 분석</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag application">application</span>
+        <span class="tag">Generative Agents</span>
+        <span class="tag">RAG</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">복지 신청 여정 5단계(정보탐색 → 자격판단 → 서류준비 → 방문/통화 → 결과)에서, 인구통계 집단별로 어떤 단계에서 dropout이 가장 많이 발생하는가? 누적 기억은 다음 단계 행동을 어떻게 바꾸는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">Generative Agents 식 memory/reflection 부여 + 100~500명 페르소나에게 longitudinal 신청 여정 시뮬레이션. 단계별 dropout rate + memory snapshot 분석. RAG로 실제 복지로 정보 주입.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">Generative Agents의 memory + RAG. 정적 prompt가 아닌 누적적 시뮬레이션.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">사회복지사 face validity 코딩(연구노트 50개 샘플). 단계별 dropout 분포 vs KIHASA 자료.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">"신청주의" "비수급" "정보 접근성" 사회복지 핵심 논의와 직결. <strong>T14(Administrative Burden)와 결합 시 1순위</strong>.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 단계별 dropout 유형 분류 · 누적 기억의 행동 영향 양상.
+      &nbsp;<strong class="bcant">✗</strong> 특정 개인의 신청 성공 예측.
+    </div>
+  </div>
+
+  <div class="topic" id="t2">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T2</div>
+        <div class="topic-title">4자 상담 대화 시뮬레이션 — 사회복지사·수혜자·가족·행정</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag application">application</span>
+        <span class="tag">CAMEL</span>
+        <span class="tag">role-play</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">4자 상담 대화에서 서비스 연결이 끊기는 지점은 어떤 의사소통 구조에서 가장 빈번한가? 가족이 매개자로 들어가는 경우와 빠진 경우의 dropout 패턴은 어떻게 다른가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">CAMEL inception prompting으로 4 역할 부여. 시나리오 10~20개. 대화 단절 지점 자동 코딩.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">CAMEL을 사회복지 시나리오로 직접 확장.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">사회복지사 2명 face validity 코딩 · 실제 사례관리 기록 패턴 일치도.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">사례관리 실무 직결. 사회복지학 학술지(SWR, JSW) published 가능성.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 대화 구조별 단절 유형. 가족 매개 효과 양상.
+      &nbsp;<strong class="bcant">✗</strong> 실제 상담 결과 예측.
+    </div>
+  </div>
+
+  <div class="topic" id="t7">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T7</div>
+        <div class="topic-title">위기가구 발굴-연결 다단계 흐름 시뮬레이션</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag application">application</span>
+        <span class="tag">CAMEL+GenAgents</span>
+        <span class="tag">위기정보</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">위기신호 → 발굴 → 연락 → 상담 → 서비스 연결의 5단계에서, 어떤 페르소나 조건이 어떤 단계에서 연결 실패를 일으키는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">위기신호별 시나리오 + 4자 multi-agent + memory. 단계별 연결 실패율 + 실패 유형 taxonomy.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">CAMEL + Generative Agents. 보건복지부 위기가구 발굴 정책과 직결.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">사회복지사 FGI 5명 · 실제 발굴-연결 실패 사례 유형 매핑.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">한국 사회복지 핵심 정책 의제 위에 직접.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 연결 실패 유형 taxonomy.
+      &nbsp;<strong class="bcant">✗</strong> 실제 가구의 위기 예측.
+    </div>
+  </div>
+
+  <div class="topic" id="t8">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T8</div>
+        <div class="topic-title">고독사·고립 안부망 접점 시퀀스 시뮬레이션</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag application">application</span>
+        <span class="tag">S3+GenAgents</span>
+        <span class="tag">longitudinal</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">안부 접점(전화·방문·문자·이웃·복지사)을 다른 순서로 노출했을 때, 어떤 시퀀스가 가장 낮은 방어감과 가장 높은 cumulative trust를 만드는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">Generative Agents memory + S3 감정 모델링. 8~12회차 longitudinal 안부 시나리오. 접점 변화에 대한 trust trajectory.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">S3 + Generative Agents. 노인맞춤돌봄서비스 운영 데이터와 연결 가능.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">사회복지사 평가 · 안부망 운영 기관 자문 · 실제 거부 유형 매핑.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">사회적 임팩트 강함. HCI for aging fit. 안부망 실무 디자인 개선 가능.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 접점 시퀀스별 수용·거부의 집단별 패턴.
+      &nbsp;<strong class="bcant">✗</strong> 실제 고독사 위험 예측.
+    </div>
+  </div>
+
+  <!-- CLUSTER γ : INFO/ENV DESIGN -->
+  <div class="cluster-head">
+    <h3>γ. 정보·환경 디자인 클러스터 — 가장 신선함</h3>
+    <div class="cluster-blurb">OASIS의 환경 동역학·추천시스템을 사회복지 메시지·정책에 적용. HCI/CSS/iSchool fit.</div>
+  </div>
+
+  <div class="topic" id="t3">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T3</div>
+        <div class="topic-title">복지 메시지의 SNS 확산·변형 시뮬레이션 — 낙인이 자라는 경로</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag novel">novel</span>
+        <span class="tag">OASIS+S3</span>
+        <span class="tag">stigma</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">같은 복지 정책을 권리·시혜·행정·공동체 중심으로 표현했을 때, SNS 네트워크에서 메시지는 어떤 변형 경로를 거치고 어디서 낙인 프레임이 자라나는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">OASIS recommendation + S3 감정/태도. 페르소나 1,000명 SNS. 4 메시지 frame × 7일. 댓글 stigma score · misinformation frame 자동 코딩.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">OASIS 확산·추천 + S3. 사회복지 PR 사전 점검.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">사회복지사 face validity + 실제 정책 발표 후 SNS 반응 자료와 패턴 비교.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">CSS·iSchool fit 매우 좋음.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 메시지 frame별 변형·낙인 패턴 양상.
+      &nbsp;<strong class="bcant">✗</strong> 실제 여론 예측.
+    </div>
+  </div>
+
+  <div class="topic" id="t6">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T6</div>
+        <div class="topic-title">복지정보 추천 시스템의 사각지대 — 알고리즘 노출 격차 audit</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag novel">novel</span>
+        <span class="tag">OASIS</span>
+        <span class="tag">fairness</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">복지로/지자체 feed 알고리즘은 어떤 집단을 systematic하게 underserve하는가? 추천 정책(자격매칭 vs 인기도 vs 형평성)이 노출 격차를 어떻게 바꾸는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">OASIS recommendation 모듈 활용. 페르소나별 노출 카운트 · 자격 매치 정보 도달률.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">OASIS environment dynamics + fairness ML.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">알고리즘 ablation. 실제 복지로 사용 패턴 자료와 부분 비교.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">사회복지 + algorithmic fairness 교차점. responsible public sector AI fit.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 추천 정책별 노출 격차 양상.
+      &nbsp;<strong class="bcant">✗</strong> 실제 신청 결과 예측.
+    </div>
+  </div>
+
+  <div class="topic" id="t10">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T10</div>
+        <div class="topic-title">환경 구조 ablation — 같은 에이전트, 다른 노출 시점</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag novel">novel</span>
+        <span class="tag">Agents Alone</span>
+        <span class="tag">methodology</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">동일 페르소나·동일 메시지라도 안내문 노출 시점 / 신청 마감 / 대기 시간 / 사회복지사 개입 시점을 바꾸면 결과가 어떻게 달라지는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content"><em>AI Agents Alone Are Not Sufficient</em>의 주장을 한국 복지에서 실증. 환경 인자 4~5개 grid ablation.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">2603.00113의 한국 복지 적용 + 정책 디자인 implication.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">환경 인자별 effect size. 사회복지 정책 디자인 implication 코딩.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">방법론 + 정책 implication. "<em>environment matters more than personas</em>" SOP 서사.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 환경 인자별 결과 변화 양상.
+      &nbsp;<strong class="bcant">✗</strong> 실제 정책 효과 예측.
+    </div>
+  </div>
+
+  <!-- CLUSTER δ : SOCIAL WORKER -->
+  <div class="cluster-head">
+    <h3>δ. 사회복지사 의사결정 클러스터 — 실무 가치 + 데이터 리스크</h3>
+    <div class="cluster-blurb">기관 협업·IRB 부담이 있지만 실무 적용성 가장 높음.</div>
+  </div>
+
+  <div class="topic" id="t12">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T12</div>
+        <div class="topic-title">사회복지사 의사결정 시뮬레이션 — 사례관리 노트 grounding</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag">CAMEL+Self-Reports</span>
+        <span class="tag">decision support</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">사례관리 노트로 grounding한 사회복지사 LLM agent의 결정이 실제 사회복지사 결정과 얼마나 일치하는가? 일치도가 낮은 사례는 어떤 특성?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">기관 협업으로 deidentified 노트 ~200건 → 페르소나 grounding → 신규 사례 결정 자동 생성 → 실제 사회복지사 결정과 일치도.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">CAMEL + grounded self-reports.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">결정 일치도(정확도) · disagreement 유형 분석.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">실무 도구. 단, <strong>데이터 접근 위험 가장 큼</strong>.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> training/evaluation 도구의 일치도 양상.
+      &nbsp;<strong class="bcant">✗</strong> 사회복지사 대체. 결정 자동화.
+    </div>
+  </div>
+
+  <!-- ===== CLUSTER ε : WELFARE THEORY (NEW IN v0.2) ===== -->
+  <div class="cluster-head theory-cluster">
+    <h3>ε. 사회복지 이론 기반 효능·태도·수용성 클러스터 — v0.2 신규 / 가장 publishable</h3>
+    <div class="cluster-blurb">정착된 사회복지 학술 이론을 LLM-에이전트 시뮬레이션의 분석 anchor로. <em>Social Service Review</em>·<em>JSP</em>·<em>Administration in Social Work</em>·<em>JPART</em> 같은 학술지 적합도가 가장 높다.</div>
+  </div>
+
+  <div class="topic theory-topic" id="t13">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T13 · ε-1</div>
+        <div class="topic-title">정책 효능감 differential — self-efficacy × system-efficacy 시뮬레이션</div>
+        <div class="topic-theory-anchor">↳ Bandura (1977) self-efficacy + Easton political efficacy (internal/external)</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag theory-tag">welfare theory</span>
+        <span class="tag">efficacy</span>
+        <span class="tag">message framing</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">자기 효능감(self-efficacy)과 시스템 효능감(system-efficacy)의 조합이 다른 페르소나는, 같은 복지 정책 메시지에 어떤 비선형 반응 패턴을 보이는가? 어떤 frame이 self-efficacy를 키우고, 어떤 frame이 system-efficacy를 낮추는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">페르소나에 4상한 (high/low self × high/low system) 부여 + Bandura 자기효능감 4 원천(performance, vicarious, verbal, physiological)을 메시지 처치로 변형. 변화량을 Δself-efficacy·Δsystem-efficacy로 측정.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">Bandura 자기효능감 이론 + Easton 정치효능감. LLM-에이전트 시뮬레이션으로 정량화한 사례 거의 없음.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">메시지 처치별 효능감 변화 분포 · 사회복지사 face validity · 가능하면 소규모 사용자 RCT pilot.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">"효능감"은 사회복지·복지정책 학술지의 keyword. <em>Social Policy &amp; Administration</em>·<em>JSP</em>·<em>Administration &amp; Society</em> 적합도 매우 높음.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 메시지 frame이 self/system-efficacy를 변화시키는 양상.
+      &nbsp;<strong class="bcant">✗</strong> 개인 신청 행동 예측. 효능감 점수의 개인 진단.
+    </div>
+  </div>
+
+  <div class="topic theory-topic" id="t14">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T14 · ε-2</div>
+        <div class="topic-title">Administrative Burden 3차원이 만드는 dropout 분포</div>
+        <div class="topic-theory-anchor">↳ Herd &amp; Moynihan (2018) — Learning · Compliance · Psychological costs</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag theory-tag">welfare theory</span>
+        <span class="tag">administrative burden</span>
+        <span class="tag novel">novel</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">같은 한국 복지 정책이라도 (a) 학습 비용(어디서 알 수 있는가) (b) 준수 비용(서류·시간) (c) 심리적 비용(낙인·자존감)의 분포가 다른 시나리오에서, 어떤 페르소나가 어떤 비용에서 가장 많이 dropout하는가? 3차원 중 한국 맥락에서 가장 큰 손실 차원은?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">3차원 burden을 환경 변수로 명시(B3 조건 충족). 같은 정책 3 variants × 페르소나 1,000명 × longitudinal 5단계 신청 여정. 차원별 dropout 분포 → 정책 디자인 implication.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">Herd &amp; Moynihan <em>Administrative Burden</em>(Russell Sage 2018) — 미국 공공행정·사회복지 학계의 핵심 framework. 한국에서는 아직 LLM 시뮬레이션 적용 사례 없음.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">3차원 dropout 분포 · 사회복지사 평가 · 실제 비수급 사례와 패턴 매핑(KIHASA 자료).</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content"><strong>가장 publishable</strong>. <em>JPART</em>·<em>Public Administration Review</em>·<em>SSR</em> 적합. 한국 정책 implication 강함. T1과 결합 시 1순위.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 3차원 burden별 dropout 분포 양상. 정책 디자인 시사점.
+      &nbsp;<strong class="bcant">✗</strong> 실제 정책의 비수급률 예측.
+    </div>
+  </div>
+
+  <div class="topic theory-topic" id="t15">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T15 · ε-3</div>
+        <div class="topic-title">CARIN deservingness — "받을 자격" 판단의 페르소나별 weight</div>
+        <div class="topic-theory-anchor">↳ van Oorschot (2000, 2006) — Control · Attitude · Reciprocity · Identity · Need</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag theory-tag">welfare theory</span>
+        <span class="tag">deservingness</span>
+        <span class="tag novel">novel</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">한국 페르소나는 deservingness 판단에서 CARIN 5차원의 weight를 어떻게 다르게 주는가? 자기 자신에게 적용할 때와 타인(가상의 다른 페르소나)에게 적용할 때 weight 차이는? 인구통계 집단별 분포는?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">vignette 실험을 페르소나에게 부여. 가상 수급자 시나리오 8~12개 × CARIN 차원별 manipulation. 페르소나의 deservingness 판단을 5점 척도 + 자유응답으로 수집.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">van Oorschot의 EU 비교 연구(2000, 2006, 2017)는 미국·유럽·아시아 cross-cultural 데이터 다수. 한국은 산발적. <strong>한국 cross-section CARIN 시뮬레이션은 신선</strong>.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">한국 실제 KGSS·복지인식조사의 deservingness 항목과 분포 비교. 사회복지학 교수 face validity.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">deservingness는 사회복지·복지정치 학술지 핵심 keyword. <em>European Journal of Social Policy</em>·<em>JSP</em>·<em>Social Policy Review</em> 적합. cross-cultural comparison으로 확장 가능.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 한국 페르소나의 CARIN weight 분포.
+      &nbsp;<strong class="bcant">✗</strong> 실제 한국인의 deservingness 판단 예측.
+    </div>
+  </div>
+
+  <div class="topic theory-topic" id="t16">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T16 · ε-4</div>
+        <div class="topic-title">Policy Feedback longitudinal — 복지 경험이 정치 신뢰를 만드는 시뮬레이션</div>
+        <div class="topic-theory-anchor">↳ Mettler (2002, 2011) · Pierson (1993) — Policy Feedback Theory</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag theory-tag">welfare theory</span>
+        <span class="tag">policy feedback</span>
+        <span class="tag">longitudinal</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">복지 신청·수급·거절·재신청 경험이 페르소나의 정치 신뢰·정책 효능감·국가 인식을 longitudinal하게 어떻게 변화시키는가? 어떤 정책 디자인이 "submerged"(보이지 않는) 상태로 작동해 시민 인식을 변화시키지 못하는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">Generative Agents memory + 6~12회차 복지 경험 시뮬레이션. 회차마다 정치 신뢰·효능감 척도 응답 → 변화 trajectory. 정책 visibility 조건 ablation(Mettler의 submerged state 개념).</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">Mettler <em>The Submerged State</em>(2011), <em>Soldiers to Citizens</em>(2005), Campbell의 노인복지 정치사회학. LLM-agent simulation으로 옮긴 사례 거의 없음.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">정치 신뢰·효능감 변화 trajectory + 사회복지·정치학자 face validity. 가능하면 실제 종단 데이터(KGSS 추적)와 부분 비교.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">"정책이 시민을 만든다"는 명제의 simulation 검증. <em>American Political Science Review</em>·<em>Studies in American Political Development</em>·<em>SSR</em> 적합.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 정책 경험이 시민 인식을 변화시키는 trajectory 양상.
+      &nbsp;<strong class="bcant">✗</strong> 실제 시민의 정치 신뢰 변화 예측.
+    </div>
+  </div>
+
+  <div class="topic theory-topic" id="t17">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T17 · ε-5</div>
+        <div class="topic-title">Non-Take-Up 3단계 분해 — 비수급은 어디서 끊기는가</div>
+        <div class="topic-theory-anchor">↳ van Oorschot (1991) · Currie (2006) — Information · Threshold · Motivation</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag theory-tag">welfare theory</span>
+        <span class="tag">non-take-up</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">한국 복지 사각지대에서 자격 있는 페르소나가 신청하지 않는 비수급은, van Oorschot의 3단계(Information·Threshold·Motivation) 중 어느 단계에서 가장 큰 손실이 일어나는가? 정책 유형(공공부조 / 사회수당 / 사회서비스 / 사회보험)별 단계 분포는 어떻게 다른가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">자격 있는 페르소나를 4 정책 유형 × 3 단계 진행 시뮬레이션. 단계별 통과/탈락 비율 + 탈락 사유 자동 코딩.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">Non-take-up 연구는 1980년대 이후 사회복지 핵심. 한국에서도 비수급 연구 활발하지만 simulation으로 단계별 분해한 사례 없음.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">단계별 탈락 분포 · 사회복지사 face validity · KIHASA 비수급 연구와 비교.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">사회복지 핵심 의제 직격. <em>SSR</em>·<em>JSP</em>·<em>European Journal of Social Security</em> 적합.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> 3단계 비수급 손실 분포 양상.
+      &nbsp;<strong class="bcant">✗</strong> 실제 비수급률 예측.
+    </div>
+  </div>
+
+  <div class="topic theory-topic" id="t18">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T18 · ε-6</div>
+        <div class="topic-title">Stigma management 행동 전략 시뮬레이션</div>
+        <div class="topic-theory-anchor">↳ Goffman (1963) · Spicker (1984) — passing · withdrawal · advocacy</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag theory-tag">welfare theory</span>
+        <span class="tag">stigma</span>
+        <span class="tag">behavioral</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">복지 수급 시 stigma를 회피하기 위한 페르소나의 행동 전략(passing/감추기 · withdrawal/철회 · advocacy/항변)은 인구통계·가구·지역 집단별로 어떤 분포를 보이는가? 어떤 정책 디자인이 어떤 전략을 유도하는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">복지 수급 시나리오 + 주변 인지(가족·이웃·동료) 변수 manipulation. 페르소나의 행동 자유응답 + 분류기로 3 전략 코딩.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">Goffman의 stigma 이론(spoiled identity) + Spicker의 welfare stigma 3유형. 한국에서 행동 측면 simulation 거의 없음.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">3 전략 분포 + 사회복지사 face validity + 가능하면 in-depth interview 일부 자료와 패턴 비교.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">stigma 연구는 사회복지의 거대한 줄기. 행동 시뮬레이션 frame은 새로움.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> stigma 회피 행동의 집단별 분포.
+      &nbsp;<strong class="bcant">✗</strong> 개인의 행동 예측.
+    </div>
+  </div>
+
+  <div class="topic theory-topic" id="t19">
+    <div class="topic-header">
+      <div class="topic-header-l">
+        <div class="topic-id">T19 · ε-7</div>
+        <div class="topic-title">집합적 효능감 × 위기가구 발견 — community-level 시뮬레이션</div>
+        <div class="topic-theory-anchor">↳ Sampson, Raudenbush, &amp; Earls (1997) — collective efficacy</div>
+      </div>
+      <div class="topic-tags">
+        <span class="tag theory-tag">welfare theory</span>
+        <span class="tag">community</span>
+        <span class="tag">network</span>
+      </div>
+    </div>
+    <div class="topic-row rq"><div class="label">RQ</div><div class="content">페르소나 네트워크의 collective efficacy(<em>social cohesion + informal social control</em>) 수준이 위기가구 발견 likelihood에 어떤 비선형 영향을 주는가? 어떤 네트워크 구조에서 위기가구가 가장 빨리 발견되는가?</div></div>
+    <div class="topic-row"><div class="label">방법</div><div class="content">시군구 단위 페르소나 네트워크 (Nemotron의 252 districts 활용) + collective efficacy 수준 manipulation. 위기 신호 발생 → 네트워크 내 정보 확산 → 발견까지 시간 측정.</div></div>
+    <div class="topic-row"><div class="label">기반</div><div class="content">Sampson et al. <em>Science</em>(1997) — 폭력·도시 빈곤·아동복지에서 검증된 핵심 framework. 한국 적용은 산발적.</div></div>
+    <div class="topic-row"><div class="label">평가</div><div class="content">발견 시간 분포 · 네트워크 구조별 효과 size · 사회복지사 face validity.</div></div>
+    <div class="topic-row"><div class="label">왜 강한가</div><div class="content">개인이 아닌 community-level. <em>Children &amp; Youth Services Review</em>·<em>Social Work Research</em>·<em>JSP</em> 적합. OASIS의 백만 에이전트 네트워크 강점과 자연 결합.</div></div>
+    <div class="topic-boundary">
+      <strong class="bcan">✓</strong> collective efficacy 수준별 발견 시간 분포 양상.
+      &nbsp;<strong class="bcant">✗</strong> 특정 지역의 실제 발견율 예측.
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== F. MATRIX ===== -->
+<section id="s-matrix">
+  <h2><span class="num">F</span>비교 매트릭스 — 19 주제 한눈에</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>주제 (단축형)</th>
+          <th>박사 fit</th>
+          <th>사회복지 가치</th>
+          <th>신선함</th>
+          <th>1년 PoC</th>
+          <th>데이터 리스크</th>
+          <th>이론 anchor</th>
+          <th>클러스터</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rank">T4</td>
+          <td class="topic-name-cell">algorithmic fidelity 한국 적용</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">낮음</td>
+          <td>Argyle 2022</td>
+          <td>α</td>
+        </tr>
+        <tr>
+          <td class="rank">T5</td>
+          <td class="topic-name-cell">노인 페르소나 grounding 효과</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score mid">중</td>
+          <td>Self-Reports 2024</td>
+          <td>α</td>
+        </tr>
+        <tr>
+          <td class="rank">T9</td>
+          <td class="topic-name-cell">value-grounded 한국 페르소나</td>
+          <td class="score high">★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>Cross-Cultural 2026</td>
+          <td>α</td>
+        </tr>
+        <tr>
+          <td class="rank">T11</td>
+          <td class="topic-name-cell">한국 validity boundary 측정</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">낮음</td>
+          <td>Boundary 2026</td>
+          <td>α</td>
+        </tr>
+        <tr>
+          <td class="rank">T1</td>
+          <td class="topic-name-cell">복지 신청 여정 시뮬레이션</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">낮음</td>
+          <td>—</td>
+          <td>β</td>
+        </tr>
+        <tr>
+          <td class="rank">T2</td>
+          <td class="topic-name-cell">4자 상담 대화</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>—</td>
+          <td>β</td>
+        </tr>
+        <tr>
+          <td class="rank">T7</td>
+          <td class="topic-name-cell">위기가구 발굴-연결</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score low">높음</td>
+          <td>—</td>
+          <td>β</td>
+        </tr>
+        <tr>
+          <td class="rank">T8</td>
+          <td class="topic-name-cell">고독사 안부망 접점</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score mid">중</td>
+          <td>—</td>
+          <td>β</td>
+        </tr>
+        <tr>
+          <td class="rank">T3</td>
+          <td class="topic-name-cell">복지 메시지 SNS 확산</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">낮음</td>
+          <td>—</td>
+          <td>γ</td>
+        </tr>
+        <tr>
+          <td class="rank">T6</td>
+          <td class="topic-name-cell">추천 시스템 사각지대</td>
+          <td class="score high">★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>—</td>
+          <td>γ</td>
+        </tr>
+        <tr>
+          <td class="rank">T10</td>
+          <td class="topic-name-cell">환경 구조 ablation</td>
+          <td class="score high">★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>Agents Alone 2026</td>
+          <td>γ</td>
+        </tr>
+        <tr>
+          <td class="rank">T12</td>
+          <td class="topic-name-cell">사회복지사 결정 grounding</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score low">★★</td>
+          <td class="score low">매우 높음</td>
+          <td>—</td>
+          <td>δ</td>
+        </tr>
+        <tr style="background: var(--theory-soft);">
+          <td class="rank">T13</td>
+          <td class="topic-name-cell">정책 효능감 differential</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>Bandura 1977</td>
+          <td>ε</td>
+        </tr>
+        <tr style="background: var(--theory-soft);">
+          <td class="rank">T14</td>
+          <td class="topic-name-cell">Administrative Burden 3차원</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>Herd&amp;Moynihan 2018</td>
+          <td>ε</td>
+        </tr>
+        <tr style="background: var(--theory-soft);">
+          <td class="rank">T15</td>
+          <td class="topic-name-cell">CARIN deservingness</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>van Oorschot 2000</td>
+          <td>ε</td>
+        </tr>
+        <tr style="background: var(--theory-soft);">
+          <td class="rank">T16</td>
+          <td class="topic-name-cell">Policy Feedback longitudinal</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">낮음</td>
+          <td>Mettler 2011</td>
+          <td>ε</td>
+        </tr>
+        <tr style="background: var(--theory-soft);">
+          <td class="rank">T17</td>
+          <td class="topic-name-cell">Non-Take-Up 3단계</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>van Oorschot 1991</td>
+          <td>ε</td>
+        </tr>
+        <tr style="background: var(--theory-soft);">
+          <td class="rank">T18</td>
+          <td class="topic-name-cell">Stigma management 전략</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">낮음</td>
+          <td>Goffman 1963</td>
+          <td>ε</td>
+        </tr>
+        <tr style="background: var(--theory-soft);">
+          <td class="rank">T19</td>
+          <td class="topic-name-cell">집합적 효능감 위기발견</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score high">★★★★</td>
+          <td class="score mid">★★★</td>
+          <td class="score high">낮음</td>
+          <td>Sampson 1997</td>
+          <td>ε</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="table-hint">★ 박사 fit · 사회복지 가치 · 신선함은 별 5개 기준. 1년 PoC = 1년 안에 평가 가능한 산출물이 나오는가. ε 클러스터 행은 보라색. 모바일에서는 좌우 스크롤.</p>
+</section>
+
+<!-- ===== G. TOP 3 ===== -->
+<section id="s-top3">
+  <h2><span class="num">G</span>추천 TOP 3 (v0.2 갱신)</h2>
+
+  <p>ε 클러스터 추가로 최강 조합이 바뀐다. v0.1의 T1+T5는 여전히 좋지만, <strong>T14(Administrative Burden) + T1(신청 여정)</strong> 결합이 사회복지 학술지 publishability에서 한 단계 위다.</p>
+
+  <div class="top3">
+    <div class="top3-rank">1순위 · 결합 전략 (v0.2)</div>
+    <h3 style="margin-top: 0;">T14 (Administrative Burden) × T1 (신청 여정) 결합</h3>
+    <p><strong>왜 이 결합인가</strong>: T14가 이론 anchor(Herd&amp;Moynihan의 3차원 burden), T1이 방법론 vehicle(longitudinal multi-step simulation). 같은 시뮬레이션 환경 안에서 두 paper가 나오고, 한쪽은 <em>CS workshop</em>, 다른 쪽은 <em>Social Service Review</em>·<em>JPART</em>에 던질 수 있다. 박사 어드미션 SOP에서는 "<em>I operationalized administrative burden theory as a measurable dropout distribution in LLM-agent simulations of Korean welfare applications.</em>"라는 한 문장으로 정리된다.</p>
+    <p><strong>핵심 RQ</strong>: <em>한국 복지 신청 여정에서 Learning · Compliance · Psychological 3차원 burden의 분포는 인구통계 집단별로 어떤 dropout 패턴을 만드는가? 정책 디자인을 어떻게 바꾸면 가장 큰 burden 차원에서의 손실이 가장 많이 줄어드는가?</em></p>
+    <p><strong>산출물 패키지</strong>: 6~8pp CS workshop paper (T14 burden methodology) + 사회복지학 학술지 submission (T1 application) + GitHub repo + dashboard + 사회복지 전문가 face validity 코딩 자료 + 정책 디자인 implication 한 페이지.</p>
+    <p><strong>왜 v0.1보다 강한가</strong>: v0.1의 T1+T5는 방법론 + 응용이었지만 이론 anchor가 약했다. T14가 들어오면서 "<em>왜 이 시뮬레이션을 돌렸는가</em>"의 학술적 정당성이 처음부터 닫힌다.</p>
+  </div>
+
+  <div class="top3">
+    <div class="top3-rank">2순위 · 가장 신선한 응용</div>
+    <h3 style="margin-top: 0;">T15 — CARIN deservingness 한국 cross-section</h3>
+    <p><strong>왜</strong>: 한국에서 LLM agent로 deservingness CARIN framework를 비교한 사례가 없다. van Oorschot의 EU 비교 연구는 풍부하므로 reference frame이 명확하고, 한국 cross-section만으로도 충분한 contribution. 자신/타인 적용 시 weight 차이라는 RQ도 사회심리학적으로 강력.</p>
+    <p><strong>핵심 RQ</strong>: <em>한국 페르소나는 CARIN 5차원 weight를 자신에게 적용할 때와 타인에게 적용할 때 어떻게 다르게 부여하는가? 인구통계 집단별 분포는?</em></p>
+    <p><strong>산출물</strong>: 단일 workshop paper + KGSS·복지인식조사와의 부분 비교 + 후속 cross-cultural replication 가능성.</p>
+  </div>
+
+  <div class="top3">
+    <div class="top3-rank">3순위 · plan B 방법론</div>
+    <h3 style="margin-top: 0;">T4 — algorithmic fidelity 한국 적용</h3>
+    <p><strong>왜</strong>: 사회복지 도메인 협업이 잘 풀리지 않을 때의 안전 카드. <em>Out of One, Many</em> 한국 replication만으로 workshop paper 한 편이 나오고, 모든 다른 주제(T5·T13·T14·T15·T17)의 기반이 된다. 도메인 협업 없이도 학술적으로 닫힘.</p>
+    <p><strong>핵심 RQ</strong>: <em>Nemotron-Personas-Korea로 생성한 silicon sample이 한국 복지 설문 응답 분포를 어떤 항목·집단에서 잘 재현하고 어디서 깨지는가?</em></p>
+    <p><strong>SOP 문장</strong>: "<em>I built the first algorithmic fidelity benchmark for Korean welfare response simulation.</em>"</p>
+  </div>
+
+  <h3 style="margin-top: 32px;">의사결정 logic (v0.2)</h3>
+  <ol>
+    <li><strong>아버지 검토 결과가 "사회복지학 학술지에도 통할 수준"이라면</strong> → 1순위 T14×T1 결합 (이론 + 응용).</li>
+    <li><strong>"신선함과 cross-cultural extensibility가 더 중요하다"라면</strong> → 2순위 T15 단독.</li>
+    <li><strong>"사회복지 도메인 자문 일정이 불확실하다"라면</strong> → 3순위 T4 단독.</li>
+    <li><strong>"한국 노인복지에 집중하고 싶다"라면</strong> → T5 + T13 결합(grounding × efficacy)도 새로운 강력 옵션.</li>
+  </ol>
+</section>
+
+<!-- ===== H. FLOW ===== -->
+<section id="s-flow">
+  <h2><span class="num">H</span>6월~8월 의사결정 흐름</h2>
+
+  <p>주제를 한 번에 고정하지 않는다. 4주 평가 인프라 → 4주 pilot → go/no-go의 순서가 안전하다. v0.2에서는 이론 anchor 후보(T13·T14·T15·T17·T18) 중에서 사회복지 전문가가 우선순위를 매기는 단계가 Week 5–6에 추가된다.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="when">Week 1–2 · 6월 상순</div>
+      <h4>평가 인프라 구축</h4>
+      <ul>
+        <li>variance + mean 동시 측정 함수</li>
+        <li>JS divergence / MAE / sd ratio 자동화</li>
+        <li>face validity 코딩 양식</li>
+        <li>Nemotron 샘플링 notebook</li>
+      </ul>
+    </div>
+    <div class="flow-step">
+      <div class="when">Week 3–4 · 6월 하순</div>
+      <h4>T4 minimal replication</h4>
+      <ul>
+        <li>5~10개 복지 응답 항목 선정</li>
+        <li>silicon sample 생성</li>
+        <li>KGSS/KLoSA 일부와 비교</li>
+        <li>fidelity gap heatmap 초안</li>
+      </ul>
+    </div>
+    <div class="flow-step">
+      <div class="when">Week 5–6 · 7월 상순</div>
+      <h4>이론 anchor 우선순위</h4>
+      <ul>
+        <li>T13·T14·T15·T17·T18 사회복지 적합도 검토</li>
+        <li>아버지 + 외부 전문가 1명</li>
+        <li>한국 데이터 매핑 가능성 확인</li>
+        <li>주제 1개로 좁히기</li>
+      </ul>
+    </div>
+    <div class="flow-step">
+      <div class="when">Week 7–8 · 7월 중순</div>
+      <h4>선택 주제 pilot</h4>
+      <ul>
+        <li>100~500명 페르소나 + RAG</li>
+        <li>environment 인자 명시</li>
+        <li>variance + face validity</li>
+        <li>go/no-go 판단</li>
+      </ul>
+    </div>
+    <div class="flow-step">
+      <div class="when">Week 9–12 · 7월말~8월</div>
+      <h4>본 paper 산출물</h4>
+      <ul>
+        <li>workshop paper 초안 6~8pp</li>
+        <li>GitHub repo + README</li>
+        <li>dashboard</li>
+        <li>사회복지 학술지 second paper 초안</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== I. PITFALLS ===== -->
+<section id="s-pitfalls">
+  <h2><span class="num">I</span>피해야 할 함정 5가지</h2>
+
+  <ol>
+    <li><strong>예측 framing</strong>: MiroFish README의 "predict future trajectories"를 그대로 차용. → 모든 documentation에서 <em>"explore" "characterize" "audit"</em>로 통일.</li>
+    <li><strong>variance 누락</strong>: 평균 그래프만. → sd · variance ratio 모든 결과 표에 포함.</li>
+    <li><strong>environment-less simulation</strong>: 에이전트-에이전트 대화만 반복. → 노출 시점·신청 마감·대기 시간 명시.</li>
+    <li><strong>demographic-only persona</strong>: Nemotron 자연어 필드만, grounding 미적용. → Tier 2/3 grounding 비교가 표준.</li>
+    <li><strong>이론 anchor 없는 응용</strong>: "복지 시뮬레이션 돌려봤어요" 수준. → 모든 ε 클러스터 주제는 named theory + RQ로 닫는다.</li>
+    <li><strong>가족 협업의 conflict of interest</strong>: 아버지 단독 자문으로 face validity. → 비가족 외부 전문가 1명 이상, paper에 명시.</li>
+  </ol>
+</section>
+
+<!-- ===== J. REFERENCES ===== -->
+<section id="s-refs" class="refs">
+  <h2><span class="num">J</span>참고 자료</h2>
+
+  <h3>LLM-에이전트 시뮬레이션 기반</h3>
+  <ol>
+    <li>Park et al. (2023). <em>Generative Agents.</em> <a href="https://arxiv.org/abs/2304.03442">arxiv 2304.03442</a></li>
+    <li>Li et al. (2023). <em>CAMEL.</em> NeurIPS. <a href="https://arxiv.org/abs/2303.17760">arxiv 2303.17760</a></li>
+    <li>Gao et al. (2023). <em>S3.</em> <a href="https://arxiv.org/abs/2307.14984">arxiv 2307.14984</a></li>
+    <li>CAMEL-AI (2024). <em>OASIS.</em> <a href="https://arxiv.org/abs/2411.11581">arxiv 2411.11581</a></li>
+    <li>MiroFish. <a href="https://github.com/666ghj/MiroFish">github.com/666ghj/MiroFish</a></li>
+  </ol>
+
+  <h3>합성 페르소나 핵심</h3>
+  <ol start="6">
+    <li>Argyle et al. (2022). <em>Out of One, Many.</em> <a href="https://arxiv.org/abs/2209.06899">arxiv 2209.06899</a></li>
+    <li>(2024). <em>LLM Agents Grounded in Self-Reports.</em> <a href="https://arxiv.org/abs/2411.10109">arxiv 2411.10109</a></li>
+    <li>(2026). <em>Cross-Cultural Survey Simulation.</em> <a href="https://arxiv.org/abs/2605.16193">arxiv 2605.16193</a></li>
+    <li>NVIDIA. <em>Nemotron-Personas-Korea.</em> <a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Korea">huggingface</a></li>
+  </ol>
+
+  <h3>Boundary · validity</h3>
+  <ol start="10">
+    <li>(2026). <em>LLM Social Simulations Are a Promising Research Method.</em> <a href="https://arxiv.org/abs/2504.02234">arxiv 2504.02234</a></li>
+    <li>(2026). <em>LLM-Based Social Simulations Require a Boundary.</em> <a href="https://arxiv.org/abs/2506.19806">arxiv 2506.19806</a></li>
+    <li>(2026). <em>AI Agents Alone Are Not Yet Sufficient.</em> <a href="https://arxiv.org/abs/2603.00113">arxiv 2603.00113</a></li>
+  </ol>
+
+  <h3>사회복지 이론 backbone (ε 클러스터)</h3>
+  <ol start="13">
+    <li>Bandura, A. (1977). Self-efficacy: Toward a unifying theory of behavioral change. <em>Psychological Review</em>, 84(2), 191–215.</li>
+    <li>Herd, P., &amp; Moynihan, D. P. (2018). <em>Administrative Burden: Policymaking by Other Means.</em> Russell Sage Foundation.</li>
+    <li>van Oorschot, W. (2000). Who should get what, and why? On deservingness criteria and the conditionality of solidarity among the public. <em>Policy &amp; Politics</em>, 28(1), 33–48.</li>
+    <li>van Oorschot, W. (1991). Non-take-up of social security benefits in Europe. <em>Journal of European Social Policy</em>, 1(1), 15–30.</li>
+    <li>Currie, J. (2006). The take-up of social benefits. In <em>Public Policy and the Income Distribution</em> (pp. 80–148). Russell Sage Foundation.</li>
+    <li>Mettler, S. (2011). <em>The Submerged State: How Invisible Government Policies Undermine American Democracy.</em> University of Chicago Press.</li>
+    <li>Mettler, S. (2002). Bringing the state back in to civic engagement. <em>American Political Science Review</em>, 96(2), 351–365.</li>
+    <li>Pierson, P. (1993). When effect becomes cause: Policy feedback and political change. <em>World Politics</em>, 45(4), 595–628.</li>
+    <li>Goffman, E. (1963). <em>Stigma: Notes on the Management of Spoiled Identity.</em> Prentice-Hall.</li>
+    <li>Spicker, P. (1984). <em>Stigma and Social Welfare.</em> Croom Helm.</li>
+    <li>Sampson, R. J., Raudenbush, S. W., &amp; Earls, F. (1997). Neighborhoods and violent crime: A multilevel study of collective efficacy. <em>Science</em>, 277(5328), 918–924.</li>
+  </ol>
+
+  <h3>사회복지 ABM 보조</h3>
+  <ol start="24">
+    <li><em>Agent-Based Modeling: Value Added to Social Work Research.</em> Sage 2019. <a href="https://journals.sagepub.com/doi/10.1177/1044389419842764">DOI</a></li>
+    <li><em>Nonlinearity in Social Service Evaluation.</em> SWR. <a href="https://academic.oup.com/swr/article-pdf/35/1/20/4619570/35-1-20.pdf">PDF</a></li>
+    <li><em>ABM of Child Maltreatment Prevention.</em> JASSS 18(3). <a href="https://www.jasss.org/18/3/6.html">link</a></li>
+  </ol>
+
+  <h3>한국 공개 자료</h3>
+  <ol start="27">
+    <li>2023 노인실태조사 — <a href="https://repository.kihasa.re.kr/handle/201002/46064?mode=full">KIHASA</a></li>
+    <li>KGSS — <a href="https://swb.skku.edu/kgss/data.do">성균관대 KGSS</a></li>
+    <li>고령화연구패널 KLoSA — <a href="https://survey.keis.or.kr/klosa/klosa04.jsp">KEIS</a></li>
+    <li>KOSTAT 사회조사 — <a href="https://www.kostat.go.kr/menu.es?mid=a20205030000">통계청</a></li>
+    <li>NIA 디지털정보격차 실태조사 — <a href="https://nia.or.kr/site/nia_kor/ex/bbs/List.do?cbIdx=81623">NIA</a></li>
+    <li>보건복지부 위기가구 발굴 — <a href="https://www.mohw.go.kr/board.es?act=view&bid=0027&cg_code=&list_no=375937&mid=a10503010000&tag=">MOHW</a></li>
+    <li>한국복지패널 — <a href="https://www.koweps.re.kr">KOWEPS</a></li>
+  </ol>
+
+  <h3>내부 자료</h3>
+  <ol start="34">
+    <li><code>corpus/notes/2026-05-19_MiroFish_Nemotron_미국박사_포트폴리오_논문전략.md</code></li>
+    <li><code>corpus/notes/2026-05-19_아버지_설명용_MiroFish_Nemotron_사회복지정책_연구초안.md</code></li>
+    <li><code>corpus/notes/2026-05-19_사회복지_AI_연구주제_후보_리서치.md</code></li>
+    <li><code>corpus/notes/2026-05-19_사회복지_AI_포트폴리오_논문_종합전략.md</code></li>
+  </ol>
+</section>
+
+<footer>
+  <p>이 보고서는 박사 진학 준비용 내부 탐색 문서이며, 외부 인용을 의도하지 않는다.<br>
+  논문/SOP/지원서 외부 자료에서는 본 보고서의 framing(예: "<em>population-calibrated synthetic personas</em>", "<em>validity boundary</em>", "<em>administrative burden in simulated welfare journeys</em>", "<em>collective qualitative patterns</em>")만 차용하고, 본 보고서 자체는 인용하지 않는다.<br>
+  버전 v0.2 · 2026-05-20 · Lee Ju-ho. v0.1과의 차이: ε 사회복지 이론 클러스터 7개 추가 · 모바일 CSS 개선 · TOP 3 재구성.</p>
+</footer>
+
+</main>
+</div>
+
+<script>
+  // Smooth scroll active TOC highlight
+  const links = document.querySelectorAll('.toc a');
+  const sections = document.querySelectorAll('section[id]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.style.color = '');
+        const link = document.querySelector(`.toc a[href="#${entry.target.id}"]`);
+        if (link) link.style.color = 'var(--accent)';
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
